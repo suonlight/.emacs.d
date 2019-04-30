@@ -9,6 +9,11 @@
  "q"       #'quit-window)
 
 (general-define-key
+ :keymaps 'racer-help-mode-map
+ :states 'normal
+ "q"       #'quit-window)
+
+(general-define-key
  :keymaps 'global-map
  :states '(normal visual insert emacs)
  "s-<mouse-1>"  #'dumb-jump-go
