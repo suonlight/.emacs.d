@@ -332,6 +332,7 @@
  "wx"         #'kill-buffer-and-window
 
  ;; errors
+ "e"          #'(:ignore t :which-key "errors")
  "eN"         #'flycheck-previous-error
  "eS"         #'flycheck-set-checker-executable
  "eb"         #'flycheck-buffer
@@ -347,7 +348,7 @@
  "ey"         #'flycheck-copy-errors-as-kill
 
  ;; jump
- "j"         #'(:ignore t :which-key "jump")
+ "j"          #'(:ignore t :which-key "jump")
  "jD"         #'dired-jump-other-window
  "jb"         #'avy-pop-mark
  "jd"         #'dired-jump
