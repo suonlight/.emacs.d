@@ -53,12 +53,12 @@
 
 ;; (define-key ivy-minibuffer-map (kbd "C-m") '(lambda () (insert "models")))
 
-(general-define-key
- :states '(insert emacs)
- :keymaps 'emmet-mode-keymap
- "TAB"   #'emmet-expand-line
- "<tab>" #'emmet-expand-line
- )
+;; (general-define-key
+;;  :states '(insert emacs)
+;;  :keymaps 'emmet-mode-keymap
+;;  "TAB"   #'emmet-expand-line
+;;  "<tab>" #'emmet-expand-line
+;;  )
 
 (general-define-key
  :states '(normal visual)
