@@ -409,15 +409,9 @@ Argument PARAMS the org parameters of the code block."
 
 (use-package org-tree-slide
   :commands (org-tree-slide-mode org-tree-slide-skip-done-toggle)
-  :bind (:map org-mode-map
-	      ("<f8>" . org-tree-slide-mode)
-	      ("S-<f8>" . org-tree-slide-skip-done-toggle))
   :config (org-tree-slide-simple-profile))
-  ;; (define-key org-mode-map (kbd "<f8>") 'org-tree-slide-mode)
-  ;; (define-key org-mode-map (kbd "S-<f8>") 'org-tree-slide-skip-done-toggle)
 
 (use-package org-pomodoro :after org :commands org-pomodoro)
-
 
 (defun org-in-any-block-p ()
   "Return non-nil if the point is in any Org block.

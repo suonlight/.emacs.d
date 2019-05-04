@@ -140,6 +140,8 @@
   "CR"         #'org-clock-report
   "Cc"         #'org-clock-cancel
   "Cd"         #'org-clock-display
+  "p'"         #'org-tree-slide-mode
+  "ps"         #'org-tree-slide-skip-done-toggle
   )
 (leader-define-key emacs-lisp-mode-map
   "er" #'eval-region
