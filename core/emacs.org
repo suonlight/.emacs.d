@@ -1,506 +1,419 @@
-* Helpers
-** Refactor
+* Auto Completion
+** Company
    #+BEGIN_SRC emacs-lisp
-     (defun sl/ruby-copy-generated-spec-at-point ()
-       (interactive)
-       (let* ((method-name (ivy-thing-at-point))
-	      (model-name (f-base buffer-file-name)))
-	 (kill-new (format "describe '#%s' do\n  let(:%s) { create(:%s) }\n  let(:subject) { %s.%s }\nend"
-			   method-name
-			   model-name
-			   model-name
-			   model-name
-			   method-name))))
+     ;; Company mode
+     (use-package company
+       :init
+       (setq company-minimum-prefix-length 3)
+       (setq company-auto-complete nil)
+       (setq company-idle-delay 0.5)
+       (setq company-require-match 'never)
+       (setq company-frontends
+	     '(company-pseudo-tooltip-unless-just-one-frontend
+	       company-preview-frontend
+	       company-echo-metadata-frontend))
+       (setq tab-always-indent 'complete)
+       ;; (setq company-backends ())
+       ;; (defvar completion-at-point-functions-saved nil)
+       :hook (after-init . global-company-mode)
+       :config
+       ;; ((company-dabbrev-code company-gtags company-etags company-keywords) company-files company-dabbrev)
+
+       ;; (push 'fuzzy completion-styles)
+       ;; (setq completion-styles '(fuzzy company-flx-try-completion company-flx-all-completions "An intelligent fuzzy matching completion style."))
+
+       (defun check-expansion ()
+	 (save-excursion
+	   (if (looking-at "\\_>") t
+	     (backward-char 1)
+	     (if (looking-at "\\.") t
+	       (backward-char 1)
+	       (if (looking-at "->") t nil)))))
+
+       (defun tab-indent-or-complete ()
+	 (interactive)
+	 (if (minibufferp)
+	     (minibuffer-complete)
+	   (if (or (not yas-minor-mode)
+		   (null (yas-expand)))
+	       (if (check-expansion)
+		   (company-complete-common)
+		 (indent-for-tab-command)))))
+       ;; (global-company-mode 1)
+
+       (add-hook 'ruby-mode-hook
+		 (lambda ()
+		   (set (make-local-variable 'company-backends)
+			'(
+			  company-capf
+			  company-files
+			  company-etags
+			  company-keywords
+			  company-yasnippet
+			  ;; (
+			  ;;  company-dabbrev-code
+			  ;;  )
+			  ;; company-dabbrev
+			  )
+			)
+		   (company-mode t)
+		   ;; (push 'fuzzy completion-styles)
+		   (setq completion-styles '(partial-completion basic emacs22))
+		   ;; (company-flx-mode +1)
+		   ))
+
+       (add-hook 'emacs-lisp-mode-hook
+		 (lambda ()
+		   (push 'company-elisp company-backends)))
+
+       (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
+       (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+       (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
+       (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
+       (define-key company-mode-map [remap indent-for-tab-command] 'tab-indent-or-complete))
+
+     (use-package company-statistics
+       :after company
+       :hook (company-mode . company-statistics-mode))
+
+     ;; (use-package company-flx
+     ;;   :ensure t
+     ;;   :config
+     ;;   (with-eval-after-load 'company
+     ;;     (company-flx-mode +1)))
    #+END_SRC
 
    #+RESULTS:
-   : sl/ruby-copy-generated-spec-at-point
+   | company-statistics-mode | company-mode-set-explicitly |
 
-** Layout
+** COMMENT Posframe
    #+BEGIN_SRC emacs-lisp
-     (defun layout-switch-by-pos (pos)
-       "Switch to perspective of position POS."
-       (let ((persp-to-switch
-	      (nth pos (persp-names-current-frame-fast-ordered))))
-	 (if persp-to-switch
-	     (persp-switch persp-to-switch))))
+    (use-package posframe
+      :defer .1
+      :config
+      (setq ivy-posframe-height 30))
 
-     (dolist (i (number-sequence 9 0 -1))
-       (eval `(defun ,(intern (format "persp-switch-to-%s" i)) nil
-		,(format "Switch to layout %s.\n%s"
-			 i "See `layout-switch-by-pos' for details.")
-		(interactive)
-		(layout-switch-by-pos ,(if (eq 0 i) 9 (1- i))))))
+    (use-package company-posframe
+      :after (posframe company)
+      :config
+      (company-posframe-mode 1))
 
-     (defun sl/persp-layout ()
-       "Switch to perspective of position POS."
-       (interactive)
-       (let* ((persp-current-name (safe-persp-name (get-current-persp)))
-	      (highlight-persps (lambda (elt idx)
-				  (format (if (string= elt persp-current-name) "%d *%s*" "%d %s")
-					  (+ idx 1)
-					  (if (string= elt "none") elt (f-base elt))))))
-	 (string-join (seq-map-indexed highlight-persps (persp-names-current-frame-fast-ordered)) " | ")))
-
-     (defun layout-info ()
-       "Switch to perspective of position POS."
-       (interactive)
-       (minibuffer-message (sl/persp-layout)))
-
-     (defun sl/switch-buffer ()
-       "As `helm-mini' but restricts visible buffers by perspective."
-       (interactive)
-       (with-persp-buffer-list ()
-			       (ivy-switch-buffer)))
+    (use-package ivy-posframe
+      :after (posframe ivy)
+      :config
+      (push '(counsel-M-x . ivy-posframe-display-at-window-center) ivy-display-functions-alist)
+      (push '(counsel-projectile-find-file . ivy-posframe-display-at-window-center) ivy-display-functions-alist)
+      (push '(ivy-persp-switch-project . ivy-posframe-display-at-window-center) ivy-display-functions-alist)
+      (push '(complete-symbol . ivy-posframe-display-at-point) ivy-display-functions-alist)
+      (push '(ivy-completion-in-region . ivy-posframe-display-at-point) ivy-display-functions-alist)
+      ;; (push '(swiper . ivy-posframe-display-at-point) ivy-display-functions-alist)
+      (push '(t . ivy-posframe-display-at-window-center) ivy-display-functions-alist)
+      (ivy-posframe-enable))
    #+END_SRC
 
    #+RESULTS:
-   : sl/switch-buffer
 
+** LSP
    #+BEGIN_SRC emacs-lisp
-   ;; (minibuffer-message (get-current-persp))
+     (use-package lsp-mode
+       ;; :hook (prog-major-mode . lsp-prog-major-mode-enable)
+       ;; :hook (ruby-mode . lsp-ruby-mode-enable)
+       :commands lsp
+       ;; :init (add-hook 'ruby-mode #'lsp-ruby-mode-enable)
+       ;; :init (add-hook 'prog-major-mode #'lsp-prog-major-mode-enable)
+       :config
+       (setq lsp-prefer-flymake nil
+	     lsp-auto-guess-root t
+	     lsp-keep-workspace-alive nil)
+       (ht-set! lsp--default-notification-handlers "client/registerCapability" 'ignore)
+
+       (setq lsp-response-timeout 5)
+       (setq lsp-print-io t)
+       (setq lsp-eldoc-render-all t)
+
+       ;; ruby
+       (setq ruby-language-server-path (format "%s/ruby/bin/solargraph" user-emacs-directory))
+       (defun lsp-clients-ruby--make-init-options ()
+	 "Init options for Ruby. (syntax checking enabled)"
+	 '(:diagnostics t))
+
+       (lsp-register-client
+	(make-lsp-client :new-connection (lsp-stdio-connection
+					  (list ruby-language-server-path "stdio")
+					  )
+			 :major-modes '(ruby-mode)
+			 :initialization-options #'lsp-clients-ruby--make-init-options
+			 :priority -1
+			 :server-id 'm-ruby-ls))
+
+       )
+
+     (use-package company-lsp
+       :after (lsp-mode company)
+       :config
+       (push 'company-lsp company-backends)
+       (setq company-lsp-async t)
+       (setq company-lsp-cache-candidates 'auto)
+       (add-hook 'ruby-mode-hook (lambda ()
+				   (add-to-list 'company-lsp-filter-candidates '(m-ruby-ls . nil))
+				   (if (get-buffer-process "*m-ruby-ls*") (lsp))))
+       )
+
+     (use-package lsp-ui
+       :hook (lsp-mode . lsp-ui-mode)
+       ;; :init (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+       :config
+       (setq lsp-ui-sideline-show-hover nil)
+       (setq lsp-ui-doc-enable nil)
+       )
+
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+     ;; Fix slow LSP flycheck
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+     (defvar lsp-ui-flycheck--stale-diagnostics nil)
+
+     (defun lsp-ui-flycheck-enable (_)
+       "Enable flycheck integration for the current buffer."
+       (setq-local flycheck-check-syntax-automatically nil)
+       (setq-local flycheck-checker 'lsp-ui)
+       (lsp-ui-flycheck-add-mode major-mode)
+       (add-to-list 'flycheck-checkers 'lsp-ui)
+       (run-with-idle-timer 0.2 t
+			    (lambda () (when (and lsp-ui-flycheck--stale-diagnostics flycheck-mode)
+					 (flycheck-buffer)
+					 (setq lsp-ui-flycheck--stale-diagnostics nil))))
+       (add-hook 'lsp-after-diagnostics-hook (lambda ()
+					       (setq lsp-ui-flycheck--stale-diagnostics t)
+					       )))
    #+END_SRC
 
    #+RESULTS:
-   : t
+   : lsp-ui-flycheck-enable
 
-* Layers
-** UI
-*** COMMENT Font
-    #+BEGIN_SRC emacs-lisp
-      ;; (use-package quelpa
-      ;;   :defer nil
-      ;;   :config
-      ;;   (quelpa
-      ;;    '(quelpa-use-package
-      ;;      :fetcher git
-      ;;      :url "https://framagit.org/steckerhalter/quelpa-use-package.git"))
-      ;;   (require 'quelpa-use-package))
-
-      (use-package font-lock+
-	:quelpa
-	(font-lock+ :repo "emacsmirror/font-lock-plus" :fetcher github))
-      ;; (use-package font-lock+)
-    #+END_SRC
-
-    #+RESULTS:
-
-** Auto Completion
-*** Company
-    #+BEGIN_SRC emacs-lisp
-      ;; Company mode
-      (use-package company
-	:init
-	(setq company-minimum-prefix-length 3)
-	(setq company-auto-complete nil)
-	(setq company-idle-delay 0.5)
-	(setq company-require-match 'never)
-	(setq company-frontends
-	      '(company-pseudo-tooltip-unless-just-one-frontend
-		company-preview-frontend
-		company-echo-metadata-frontend))
-	(setq tab-always-indent 'complete)
-	;; (setq company-backends ())
-	;; (defvar completion-at-point-functions-saved nil)
-	:hook (after-init . global-company-mode)
-	:config
-	;; ((company-dabbrev-code company-gtags company-etags company-keywords) company-files company-dabbrev)
-
-	;; (push 'fuzzy completion-styles)
-	;; (setq completion-styles '(fuzzy company-flx-try-completion company-flx-all-completions "An intelligent fuzzy matching completion style."))
-
-	(defun check-expansion ()
-	  (save-excursion
-	    (if (looking-at "\\_>") t
-	      (backward-char 1)
-	      (if (looking-at "\\.") t
-		(backward-char 1)
-		(if (looking-at "->") t nil)))))
-
-	(defun tab-indent-or-complete ()
-	  (interactive)
-	  (if (minibufferp)
-	      (minibuffer-complete)
-	    (if (or (not yas-minor-mode)
-		    (null (yas-expand)))
-		(if (check-expansion)
-		    (company-complete-common)
-		  (indent-for-tab-command)))))
-	;; (global-company-mode 1)
-
-	(add-hook 'ruby-mode-hook
-		  (lambda ()
-		    (set (make-local-variable 'company-backends)
-			 '(
-			   company-capf
-			   company-files
-			   company-etags
-			   company-keywords
-			   company-yasnippet
-			   ;; (
-			   ;;  company-dabbrev-code
-			   ;;  )
-			   ;; company-dabbrev
-			   )
-			 )
-		    (company-mode t)
-		    ;; (push 'fuzzy completion-styles)
-		    (setq completion-styles '(partial-completion basic emacs22))
-		    ;; (company-flx-mode +1)
-		    ))
-
-	(add-hook 'emacs-lisp-mode-hook
-		  (lambda ()
-		    (push 'company-elisp company-backends)))
-
-	(define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
-	(define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-	(define-key company-active-map (kbd "S-TAB") 'company-select-previous)
-	(define-key company-active-map (kbd "<backtab>") 'company-select-previous)
-	(define-key company-mode-map [remap indent-for-tab-command] 'tab-indent-or-complete))
-
-      (use-package company-statistics
-	:after company
-	:hook (company-mode . company-statistics-mode))
-
-      ;; (use-package company-flx
-      ;;   :ensure t
-      ;;   :config
-      ;;   (with-eval-after-load 'company
-      ;;     (company-flx-mode +1)))
-    #+END_SRC
-
-    #+RESULTS:
-    | company-statistics-mode | company-mode-set-explicitly |
-
-*** COMMENT Posframe
-    #+BEGIN_SRC emacs-lisp
-     (use-package posframe
-       :defer .1
+** Dap
+   #+BEGIN_SRC emacs-lisp
+     (use-package dap-mode
+       :hook ((ruby-mode . dap-mode)
+	      (ruby-mode . dap-ui-mode))
+       :defer t
        :config
-       (setq ivy-posframe-height 30))
+       (defun rbenv-ruby-version ()
+	 (let ((version-file-path (or (rbenv--locate-file ".ruby-version")
+				      (rbenv--locate-file ".rbenv-version"))))
+	   (-> version-file-path
+	       f-read
+	       s-trim)))
 
-     (use-package company-posframe
-       :after (posframe company)
-       :config
-       (company-posframe-mode 1))
+       (defun rbenv-path-for (program)
+	 (expand-file-name
+	  (format "~/.rbenv/versions/%s/bin/%s" (rbenv-ruby-version) program)))
 
-     (use-package ivy-posframe
-       :after (posframe ivy)
-       :config
-       (push '(counsel-M-x . ivy-posframe-display-at-window-center) ivy-display-functions-alist)
-       (push '(counsel-projectile-find-file . ivy-posframe-display-at-window-center) ivy-display-functions-alist)
-       (push '(ivy-persp-switch-project . ivy-posframe-display-at-window-center) ivy-display-functions-alist)
-       (push '(complete-symbol . ivy-posframe-display-at-point) ivy-display-functions-alist)
-       (push '(ivy-completion-in-region . ivy-posframe-display-at-point) ivy-display-functions-alist)
-       ;; (push '(swiper . ivy-posframe-display-at-point) ivy-display-functions-alist)
-       (push '(t . ivy-posframe-display-at-window-center) ivy-display-functions-alist)
-       (ivy-posframe-enable))
-    #+END_SRC
+       (defun rbenv-rackup-path ()
+	 (expand-file-name
+	  (format "~/.rbenv/versions/%s/bin/rackup" (rbenv-ruby-version))))
 
-    #+RESULTS:
+       (defun dap-ruby--populate-start-file-args (conf)
+	 "Populate CONF with the required arguments."
+	 (-> conf
+	     (dap--put-if-absent :dap-server-path dap-ruby-debug-program)
+	     (dap--put-if-absent :type "Ruby")
+	     (dap--put-if-absent :debuggerPort 1234)
+	     (dap--put-if-absent :cwd (projectile-project-root))
+	     (dap--put-if-absent :program (buffer-file-name))
+	     (dap--put-if-absent :name "Ruby Debug")))
 
-*** LSP
-    #+BEGIN_SRC emacs-lisp
-      (use-package lsp-mode
-	;; :hook (prog-major-mode . lsp-prog-major-mode-enable)
-	;; :hook (ruby-mode . lsp-ruby-mode-enable)
-	:commands lsp
-	;; :init (add-hook 'ruby-mode #'lsp-ruby-mode-enable)
-	;; :init (add-hook 'prog-major-mode #'lsp-prog-major-mode-enable)
-	:config
-	(setq lsp-prefer-flymake nil
-	      lsp-auto-guess-root t
-	      lsp-keep-workspace-alive nil)
-	(ht-set! lsp--default-notification-handlers "client/registerCapability" 'ignore)
+       (defun dap-ruby-run-rackup ()
+	 (interactive)
+	 (let ((debug-args (list :type "Ruby"
+				 :request "launch"
+				 :program (rbenv-path-for "rackup")
+				 :debuggerPort 23000
+				 :args '()
+				 :name "Rackup")))
+	   (dap-start-debugging (-some-> (plist-get debug-args :type)
+					 (gethash dap--debug-providers)
+					 (funcall debug-args)))))
 
-	(setq lsp-response-timeout 5)
-	(setq lsp-print-io t)
-	(setq lsp-eldoc-render-all t)
-
-	;; ruby
-	(setq ruby-language-server-path (format "%s/ruby/bin/solargraph" user-emacs-directory))
-	(defun lsp-clients-ruby--make-init-options ()
-	  "Init options for Ruby. (syntax checking enabled)"
-	  '(:diagnostics t))
-
-	(lsp-register-client
-	 (make-lsp-client :new-connection (lsp-stdio-connection
-					   (list ruby-language-server-path "stdio")
-					   )
-			  :major-modes '(ruby-mode)
-			  :initialization-options #'lsp-clients-ruby--make-init-options
-			  :priority -1
-			  :server-id 'm-ruby-ls))
-
-	)
-
-      (use-package company-lsp
-	:after (lsp-mode company)
-	:config
-	(push 'company-lsp company-backends)
-	(setq company-lsp-async t)
-	(setq company-lsp-cache-candidates 'auto)
-	(add-hook 'ruby-mode-hook (lambda ()
-				    (add-to-list 'company-lsp-filter-candidates '(m-ruby-ls . nil))
-				    (if (get-buffer-process "*m-ruby-ls*") (lsp))))
-	)
-
-      (use-package lsp-ui
-	:hook (lsp-mode . lsp-ui-mode)
-	;; :init (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-	:config
-	(setq lsp-ui-sideline-show-hover nil)
-	(setq lsp-ui-doc-enable nil)
-	)
-
-      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-      ;; Fix slow LSP flycheck
-      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-      (defvar lsp-ui-flycheck--stale-diagnostics nil)
-
-      (defun lsp-ui-flycheck-enable (_)
-	"Enable flycheck integration for the current buffer."
-	(setq-local flycheck-check-syntax-automatically nil)
-	(setq-local flycheck-checker 'lsp-ui)
-	(lsp-ui-flycheck-add-mode major-mode)
-	(add-to-list 'flycheck-checkers 'lsp-ui)
-	(run-with-idle-timer 0.2 t
-			     (lambda () (when (and lsp-ui-flycheck--stale-diagnostics flycheck-mode)
-					  (flycheck-buffer)
-					  (setq lsp-ui-flycheck--stale-diagnostics nil))))
-	(add-hook 'lsp-after-diagnostics-hook (lambda ()
-						(setq lsp-ui-flycheck--stale-diagnostics t)
-						)))
-    #+END_SRC
-
-    #+RESULTS:
-    : lsp-ui-flycheck-enable
-
-*** Dap
-    #+BEGIN_SRC emacs-lisp
-      (use-package dap-mode
-	:hook ((ruby-mode . dap-mode)
-	       (ruby-mode . dap-ui-mode))
-	:defer t
-	:config
-	(defun rbenv-ruby-version ()
-	  (let ((version-file-path (or (rbenv--locate-file ".ruby-version")
-				       (rbenv--locate-file ".rbenv-version"))))
-	    (-> version-file-path
-		f-read
-		s-trim)))
-
-	(defun rbenv-path-for (program)
-	  (expand-file-name
-	   (format "~/.rbenv/versions/%s/bin/%s" (rbenv-ruby-version) program)))
-
-	(defun rbenv-rackup-path ()
-	  (expand-file-name
-	   (format "~/.rbenv/versions/%s/bin/rackup" (rbenv-ruby-version))))
-
-	(defun dap-ruby--populate-start-file-args (conf)
-	  "Populate CONF with the required arguments."
-	  (-> conf
-	      (dap--put-if-absent :dap-server-path dap-ruby-debug-program)
-	      (dap--put-if-absent :type "Ruby")
-	      (dap--put-if-absent :debuggerPort 1234)
-	      (dap--put-if-absent :cwd (projectile-project-root))
-	      (dap--put-if-absent :program (buffer-file-name))
-	      (dap--put-if-absent :name "Ruby Debug")))
-
-	(defun dap-ruby-run-rackup ()
-	  (interactive)
-	  (let ((debug-args (list :type "Ruby"
-				  :request "launch"
-				  :program (rbenv-path-for "rackup")
-				  :debuggerPort 23000
-				  :args '()
-				  :name "Rackup")))
-	    (dap-start-debugging (-some-> (plist-get debug-args :type)
-					  (gethash dap--debug-providers)
-					  (funcall debug-args)))))
-
-	(defun dap-ruby-run-rails-s ()
-	  (interactive)
-	  (let ((debug-args (list :type "Ruby"
-				  :request "launch"
-				  :program "bin/rails"
-				  :args '("s")
-				  :debuggerPort 23000
-				  :name "Rails Server")))
-	    (dap-start-debugging (-some-> (plist-get debug-args :type)
-					  (gethash dap--debug-providers)
-					  (funcall debug-args)))))
+       (defun dap-ruby-run-rails-s ()
+	 (interactive)
+	 (let ((debug-args (list :type "Ruby"
+				 :request "launch"
+				 :program "bin/rails"
+				 :args '("s")
+				 :debuggerPort 23000
+				 :name "Rails Server")))
+	   (dap-start-debugging (-some-> (plist-get debug-args :type)
+					 (gethash dap--debug-providers)
+					 (funcall debug-args)))))
 
 
-	(defun dap-ruby-attach-rails-s ()
-	  (interactive)
-	  (let ((debug-args (list :type "Ruby"
-				  :request "attach"
-				  :program "bin/rails"
-				  :args '("s")
-				  :debuggerPort 13000
-				  :wait-for-port t
-				  :port 3000
-				  :host "localhost"
-				  :hostName "localhost"
-				  :name "Attach Rails Server")))
-	    (dap-start-debugging (-some-> (plist-get debug-args :type)
-					  (gethash dap--debug-providers)
-					  (funcall debug-args)))))
+       (defun dap-ruby-attach-rails-s ()
+	 (interactive)
+	 (let ((debug-args (list :type "Ruby"
+				 :request "attach"
+				 :program "bin/rails"
+				 :args '("s")
+				 :debuggerPort 13000
+				 :wait-for-port t
+				 :port 3000
+				 :host "localhost"
+				 :hostName "localhost"
+				 :name "Attach Rails Server")))
+	   (dap-start-debugging (-some-> (plist-get debug-args :type)
+					 (gethash dap--debug-providers)
+					 (funcall debug-args)))))
 
-	(defun dap-ruby-attach-rackup ()
-	  (interactive)
-	  (let ((debug-args (list :type "Ruby"
-				  :request "attach"
-				  ;; :program "rackup"
-				  ;; :program-to-start "rackup"
-				  ;; :args '()
-				  ;; :debuggerPort 13000
-				  :remotePort "1234"
-				  :remoteHost "127.0.0.1"
-				  :remoteWorkspaceRoot (projectile-project-root)
-				  :preLaunchTask "start-debug"
-				  :wait-for-port t
-				  :port 9292
-				  :host "localhost"
-				  :hostName "localhost"
-				  :name "Attach Sinatra Server")))
-	    (dap-start-debugging (-some-> (plist-get debug-args :type)
-					  (gethash dap--debug-providers)
-					  (funcall debug-args)))))
+       (defun dap-ruby-attach-rackup ()
+	 (interactive)
+	 (let ((debug-args (list :type "Ruby"
+				 :request "attach"
+				 ;; :program "rackup"
+				 ;; :program-to-start "rackup"
+				 ;; :args '()
+				 ;; :debuggerPort 13000
+				 :remotePort "1234"
+				 :remoteHost "127.0.0.1"
+				 :remoteWorkspaceRoot (projectile-project-root)
+				 :preLaunchTask "start-debug"
+				 :wait-for-port t
+				 :port 9292
+				 :host "localhost"
+				 :hostName "localhost"
+				 :name "Attach Sinatra Server")))
+	   (dap-start-debugging (-some-> (plist-get debug-args :type)
+					 (gethash dap--debug-providers)
+					 (funcall debug-args)))))
 
 
-	(defun dap-ruby-run-test-at-point ()
-	  "Run JUnit test.
-				    If there is no method under cursor it will fallback to test class."
-	  (interactive)
-	  (let ((debug-args (list :type "Ruby"
-				  :request "launch"
-				  ;; :program "bin/rspec"
-				  :program (rbenv-path-for "rspec")
-				  :args `(,(copy-file-path-with-line))
-				  :environment-variables '(("DISABLE_SPRING" . "true"))
-				  :name "Rspec File At Point")))
-	    (dap-start-debugging (-some-> (plist-get debug-args :type)
-					  (gethash dap--debug-providers)
-					  (funcall debug-args)))))
+       (defun dap-ruby-run-test-at-point ()
+	 "Run JUnit test.
+				   If there is no method under cursor it will fallback to test class."
+	 (interactive)
+	 (let ((debug-args (list :type "Ruby"
+				 :request "launch"
+				 ;; :program "bin/rspec"
+				 :program (rbenv-path-for "rspec")
+				 :args `(,(copy-file-path-with-line))
+				 :environment-variables '(("DISABLE_SPRING" . "true"))
+				 :name "Rspec File At Point")))
+	   (dap-start-debugging (-some-> (plist-get debug-args :type)
+					 (gethash dap--debug-providers)
+					 (funcall debug-args)))))
 
-	(defun dap-ruby-run-test ()
-	  "Run JUnit test.
-				    If there is no method under cursor it will fallback to test class."
-	  (interactive)
-	  (let ((debug-args (list :type "Ruby"
-				  :request "launch"
-				  :program (rbenv-path-for "rspec")
-				  :environment-variables '(("DISABLE_SPRING" . "true"))
-				  :args `(,buffer-file-name)
-				  :name "Rspec File")))
-	    (dap-start-debugging (-some-> (plist-get debug-args :type)
-					  (gethash dap--debug-providers)
-					  (funcall debug-args)))))
+       (defun dap-ruby-run-test ()
+	 "Run JUnit test.
+				   If there is no method under cursor it will fallback to test class."
+	 (interactive)
+	 (let ((debug-args (list :type "Ruby"
+				 :request "launch"
+				 :program (rbenv-path-for "rspec")
+				 :environment-variables '(("DISABLE_SPRING" . "true"))
+				 :args `(,buffer-file-name)
+				 :name "Rspec File")))
+	   (dap-start-debugging (-some-> (plist-get debug-args :type)
+					 (gethash dap--debug-providers)
+					 (funcall debug-args)))))
 
-	(setq dap-ruby-debug-program `("node" ,(expand-file-name "~/.suon-emacs/ruby/rebornix.Ruby-0.22.3/extension/out/debugger/main.js")))
-	(dap-register-debug-provider "Ruby" 'dap-ruby--populate-start-file-args)
+       (setq dap-ruby-debug-program `("node" ,(expand-file-name "~/.suon-emacs/ruby/rebornix.Ruby-0.22.3/extension/out/debugger/main.js")))
+       (dap-register-debug-provider "Ruby" 'dap-ruby--populate-start-file-args)
 
-	;; (require 'dap-ruby)
-	;; (add-hook 'ruby-mode-hook (lambda ()
-	;; 			      (dap-mode)
-	;; 			      (dap-ui-mode)))
+       ;; (require 'dap-ruby)
+       ;; (add-hook 'ruby-mode-hook (lambda ()
+       ;; 			      (dap-mode)
+       ;; 			      (dap-ui-mode)))
 
-	(general-define-key
-	 :states '(normal visual emacs)
-	 :keymaps 'dap-mode-map
-	 "M-<f8>"       #'dap-eval
-	 "<f8>"         #'dap-next
-	 "<f7>"         #'dap-step-in
-	 "S-<f7>"       #'dap-step-out
-	 "<f9>"         #'dap-continue
-	 "M-<f8>"       #'dap-eval
-	 "s-S-<f8>"     #'dap-ui-breakpoints
-	 "s-."          #'dap-hydra
-	 "s-<f8>"       #'dap-breakpoint-toggle)
+       (general-define-key
+	:states '(normal visual emacs)
+	:keymaps 'dap-mode-map
+	"M-<f8>"       #'dap-eval
+	"<f8>"         #'dap-next
+	"<f7>"         #'dap-step-in
+	"S-<f7>"       #'dap-step-out
+	"<f9>"         #'dap-continue
+	"M-<f8>"       #'dap-eval
+	"s-S-<f8>"     #'dap-ui-breakpoints
+	"s-."          #'dap-hydra
+	"s-<f8>"       #'dap-breakpoint-toggle)
 
-	(general-define-key
-	 :states '(normal visual emacs)
-	 :keymaps 'ruby-test-mode-map
-	 "<f5>"       #'dap-ruby-run-test-at-point)
+       (general-define-key
+	:states '(normal visual emacs)
+	:keymaps 'ruby-test-mode-map
+	"<f5>"       #'dap-ruby-run-test-at-point)
 
-	(leader-define-key ruby-mode-map
-	  "d"    #'(:ignore t :which-key "debugger")
-	  "dn"   #'dap-next
-	  "di"   #'dap-step-in
-	  "do"   #'dap-step-out
-	  "dc"   #'dap-continue
-	  "dR"   #'dap-ui-repl
-	  "dr"   #'dap-restart-frame
-	  "ds"   #'(:ignore t :which-key "switch")
-	  "dss"  #'dap-switch-session
-	  "dst"  #'dap-switch-thread
-	  "dsf"  #'dap-switch-stack-frame
-	  "dsl"  #'dap-ui-locals
-	  "dsb"  #'dap-ui-breakpoints
-	  "dsS"  #'dap-ui-sessions
-	  "db"   #'(:ignore t :which-key "breakpoints")
-	  "dbt"  #'dap-breakpoint-toggle
-	  "dba"  #'dap-breakpoint-add
-	  "dbd"  #'dap-breakpoint-delete
-	  "dbc"  #'dap-breakpoint-condition
-	  "dbh"  #'dap-breakpoint-hit-condition
-	  "dbl"  #'dap-breakpoint-log-message
-	  "de"   #'(:ignore t #':which-key "eval")
-	  "dee"  #'dap-eval
-	  "der"  #'dap-eval-region
-	  "des"  #'dap-eval-thing-at-point
-	  "deii" #'dap-ui-inspect
-	  "deir" #'dap-ui-inspect-region
-	  "deis" #'dap-ui-inspect-thing-at-point
-	  "d."   #'dap-hydra
-	  "dt"   #'(:ignore t :which-key "test")
-	  "dtt"  #'dap-ruby-run-test-at-point
-	  "dtb"  #'dap-ruby-run-test
-	  "dd"   #'dap-debug)
+       (leader-define-key ruby-mode-map
+	 "d"    #'(:ignore t :which-key "debugger")
+	 "dn"   #'dap-next
+	 "di"   #'dap-step-in
+	 "do"   #'dap-step-out
+	 "dc"   #'dap-continue
+	 "dR"   #'dap-ui-repl
+	 "dr"   #'dap-restart-frame
+	 "ds"   #'(:ignore t :which-key "switch")
+	 "dss"  #'dap-switch-session
+	 "dst"  #'dap-switch-thread
+	 "dsf"  #'dap-switch-stack-frame
+	 "dsl"  #'dap-ui-locals
+	 "dsb"  #'dap-ui-breakpoints
+	 "dsS"  #'dap-ui-sessions
+	 "db"   #'(:ignore t :which-key "breakpoints")
+	 "dbt"  #'dap-breakpoint-toggle
+	 "dba"  #'dap-breakpoint-add
+	 "dbd"  #'dap-breakpoint-delete
+	 "dbc"  #'dap-breakpoint-condition
+	 "dbh"  #'dap-breakpoint-hit-condition
+	 "dbl"  #'dap-breakpoint-log-message
+	 "de"   #'(:ignore t #':which-key "eval")
+	 "dee"  #'dap-eval
+	 "der"  #'dap-eval-region
+	 "des"  #'dap-eval-thing-at-point
+	 "deii" #'dap-ui-inspect
+	 "deir" #'dap-ui-inspect-region
+	 "deis" #'dap-ui-inspect-thing-at-point
+	 "d."   #'dap-hydra
+	 "dt"   #'(:ignore t :which-key "test")
+	 "dtt"  #'dap-ruby-run-test-at-point
+	 "dtb"  #'dap-ruby-run-test
+	 "dd"   #'dap-debug)
 
-	(general-define-key
-	 :states '(normal visual emacs)
-	 :keymaps 'dap-ui-breakpoints-ui-list-mode-map
-	 "D" #'dap-ui-breakpoints-delete-selected
-	 "d" #'dap-ui-breakpoints-delete
-	 "RET" #'dap-ui-breakpoints-goto
-	 "q" #'quit-window)
+       (general-define-key
+	:states '(normal visual emacs)
+	:keymaps 'dap-ui-breakpoints-ui-list-mode-map
+	"D" #'dap-ui-breakpoints-delete-selected
+	"d" #'dap-ui-breakpoints-delete
+	"RET" #'dap-ui-breakpoints-goto
+	"q" #'quit-window)
 
-	(general-define-key
-	 :states '(normal visual emacs)
-	 :keymaps 'flycheck-error-list-mode-map
-	 "q" #'quit-window)
+       (general-define-key
+	:states '(normal visual emacs)
+	:keymaps 'flycheck-error-list-mode-map
+	"q" #'quit-window)
 
-	)
-    #+END_SRC
+       )
+   #+END_SRC
 
-    #+RESULTS:
-    | (lambda nil (if (member '(m-ruby-ls) company-lsp-filter-candidates) company-lsp-filter-candidates (setq company-lsp-filter-candidates (cons '(m-ruby-ls) company-lsp-filter-candidates))) (if (get-buffer-process *m-ruby-ls*) (lsp))) | ruby-test-enable | global-rbenv-mode | rubocop-mode | ruby-test-mode | doom-modeline-env-setup-ruby | (lambda nil (set (make-local-variable 'company-backends) '(company-capf company-files company-etags company-keywords company-yasnippet)) (company-mode t) (setq completion-styles '(partial-completion basic emacs22))) | dap-ui-mode | dap-mode | inf-ruby-minor-mode | ruby-end-mode |
+   #+RESULTS:
+   | (lambda nil (if (member '(m-ruby-ls) company-lsp-filter-candidates) company-lsp-filter-candidates (setq company-lsp-filter-candidates (cons '(m-ruby-ls) company-lsp-filter-candidates))) (if (get-buffer-process *m-ruby-ls*) (lsp))) | ruby-test-enable | global-rbenv-mode | rubocop-mode | ruby-test-mode | doom-modeline-env-setup-ruby | (lambda nil (set (make-local-variable 'company-backends) '(company-capf company-files company-etags company-keywords company-yasnippet)) (company-mode t) (setq completion-styles '(partial-completion basic emacs22))) | dap-ui-mode | dap-mode | inf-ruby-minor-mode | ruby-end-mode |
 
-*** Ruby
-    #+BEGIN_SRC emacs-lisp
+** Ruby
+   #+BEGIN_SRC emacs-lisp
 
-      ;;Mapping for ruby mode
-      ;; (leader-define-key ruby-mode-map
-      ;;   "s"  #'(:ignore t :which-key "lsp")
-      ;;   "sl" #'(lsp :which-key "start language server")
-      ;;   "sx" #'(lsp-ui-flycheck-list--quit :which-key "stop language server")
-      ;;   "sf" #'(lsp-find-definition :which-key "find definition")
-      ;;   "si" #'lsp-ui-imenu
-      ;;   "sF" #'lsp-format-buffer)
+     ;;Mapping for ruby mode
+     ;; (leader-define-key ruby-mode-map
+     ;;   "s"  #'(:ignore t :which-key "lsp")
+     ;;   "sl" #'(lsp :which-key "start language server")
+     ;;   "sx" #'(lsp-ui-flycheck-list--quit :which-key "stop language server")
+     ;;   "sf" #'(lsp-find-definition :which-key "find definition")
+     ;;   "si" #'lsp-ui-imenu
+     ;;   "sF" #'lsp-format-buffer)
 
-      (general-define-key
-       :keymaps 'lsp-ui-imenu-mode-map
-       :states 'normal
-       "q" #'lsp-ui-imenu--kill)
-    #+END_SRC
+     (general-define-key
+      :keymaps 'lsp-ui-imenu-mode-map
+      :states 'normal
+      "q" #'lsp-ui-imenu--kill)
+   #+END_SRC
 
-    #+RESULTS:
+   #+RESULTS:
 
 ** Languages
 *** Yaml
@@ -511,15 +424,6 @@
 
      #+RESULTS:
      : ((\.odc\' . archive-mode) (\.odf\' . archive-mode) (\.odi\' . archive-mode) (\.otp\' . archive-mode) (\.odp\' . archive-mode) (\.otg\' . archive-mode) (\.odg\' . archive-mode) (\.ots\' . archive-mode) (\.ods\' . archive-mode) (\.odm\' . archive-mode) (\.ott\' . archive-mode) (\.odt\' . archive-mode) (\.ya?ml$ . yaml-mode) (\.editorconfig\' . editorconfig-conf-mode) (/git-rebase-todo\' . git-rebase-mode) (\.md\' . markdown-mode) (\.markdown\' . markdown-mode) (\.\(e?ya?\|ra\)ml\' . yaml-mode) (\.gpg\(~\|\.~[0-9]+~\)?\' nil epa-file) (\.\(?:3fr\|a\(?:r[tw]\|vs\)\|bmp[23]?\|c\(?:als?\|myka?\|r[2w]\|u[rt]\)\|d\(?:c[mrx]\|ds\|ng\|px\)\|f\(?:ax\|its\)\|gif\(?:87\)?\|hrz\|ic\(?:on\|[bo]\)\|j\(?:2c\|ng\|p\(?:eg\|[2cg]\)\)\|k\(?:25\|dc\)\|m\(?:iff\|ng\|rw\|s\(?:l\|vg\)\|tv\)\|nef\|o\(?:rf\|tb\)\|p\(?:bm\|c\(?:ds\|[dltx]\)\|db\|ef\|gm\|i\(?:ct\|x\)\|jpeg\|n\(?:g\(?:24\|32\|8\)\|[gm]\)\|pm\|sd\|tif\|wp\)\|r\(?:a[fs]\|gb[ao]?\|l[ae]\)\|s\(?:c[rt]\|fw\|gi\|r[2f]\|un\|vgz?\)\|t\(?:ga\|i\(?:ff\(?:64\)?\|le\|m\)\|tf\)\|uyvy\|v\(?:da\|i\(?:car\|d\|ff\)\|st\)\|w\(?:bmp\|pg\)\|x\(?:3f\|bm\|cf\|pm\|[cv]\)\|y\(?:cbcra?\|uv\)\)\' . image-mode) (\.elc\' . elisp-byte-code-mode) (\.zst\' nil jka-compr) (\.dz\' nil jka-compr) (\.xz\' nil jka-compr) (\.lzma\' nil jka-compr) (\.lz\' nil jka-compr) (\.g?z\' nil jka-compr) (\.bz2\' nil jka-compr) (\.Z\' nil jka-compr) (\.vr[hi]?\' . vera-mode) (\(?:\.\(?:rbw?\|ru\|rake\|thor\|jbuilder\|rabl\|gemspec\|podspec\)\|/\(?:Gem\|Rake\|Cap\|Thor\|Puppet\|Berks\|Vagrant\|Guard\|Pod\)file\)\' . ruby-mode) (\.re?st\' . rst-mode) (\.py[iw]?\' . python-mode) (\.m\' . octave-maybe-mode) (\.less\' . less-css-mode) (\.scss\' . scss-mode) (\.awk\' . awk-mode) (\.\(u?lpc\|pike\|pmod\(\.in\)?\)\' . pike-mode) (\.idl\' . idl-mode) (\.java\' . java-mode) (\.m\' . objc-mode) (\.ii\' . c++-mode) (\.i\' . c-mode) (\.lex\' . c-mode) (\.y\(acc\)?\' . c-mode) (\.h\' . c-or-c++-mode) (\.c\' . c-mode) (\.\(CC?\|HH?\)\' . c++-mode) (\.[ch]\(pp\|xx\|\+\+\)\' . c++-mode) (\.\(cc\|hh\)\' . c++-mode) (\.\(bat\|cmd\)\' . bat-mode) (\.[sx]?html?\(\.[a-zA-Z_]+\)?\' . mhtml-mode) (\.svgz?\' . image-mode) (\.svgz?\' . xml-mode) (\.x[bp]m\' . image-mode) (\.x[bp]m\' . c-mode) (\.p[bpgn]m\' . image-mode) (\.tiff?\' . image-mode) (\.gif\' . image-mode) (\.png\' . image-mode) (\.jpe?g\' . image-mode) (\.te?xt\' . text-mode) (\.[tT]e[xX]\' . tex-mode) (\.ins\' . tex-mode) (\.ltx\' . latex-mode) (\.dtx\' . doctex-mode) (\.org\' . org-mode) (\.el\' . emacs-lisp-mode) (Project\.ede\' . emacs-lisp-mode) (\.\(scm\|stk\|ss\|sch\)\' . scheme-mode) (\.l\' . lisp-mode) (\.li?sp\' . lisp-mode) (\.[fF]\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.\(dpr\|DPR\)\' . delphi-mode) (\.ad[abs]\' . ada-mode) (\.ad[bs].dg\' . ada-mode) (\.\([pP]\([Llm]\|erl\|od\)\|al\)\' . perl-mode) (Imakefile\' . makefile-imake-mode) (Makeppfile\(?:\.mk\)?\' . makefile-makepp-mode) (\.makepp\' . makefile-makepp-mode) (\.mk\' . makefile-bsdmake-mode) (\.make\' . makefile-bsdmake-mode) (GNUmakefile\' . makefile-gmake-mode) ([Mm]akefile\' . makefile-bsdmake-mode) (\.am\' . makefile-automake-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.[sS]\' . asm-mode) (\.asm\' . asm-mode) (\.css\' . css-mode) (\.mixal\' . mixal-mode) (\.gcov\' . compilation-mode) (/\.[a-z0-9-]*gdbinit . gdb-script-mode) (-gdb\.gdb . gdb-script-mode) ([cC]hange\.?[lL]og?\' . change-log-mode) ([cC]hange[lL]og[-.][0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ckz]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\.bash\' . sh-mode) (\(/\|\`\)\.\(bash_\(profile\|history\|log\(in\|out\)\)\|z?log\(in\|out\)\)\' . sh-mode) (\(/\|\`\)\.\(shrc\|zshrc\|m?kshrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.m[mes]\' . nroff-mode) (\.man\' . nroff-mode) (\.sty\' . latex-mode) (\.cl[so]\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.bst\' . bibtex-style-mode) (\.sql\' . sql-mode) (\.m[4c]\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.i?tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f9[05]\' . f90-mode) (\.f0[38]\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.\(pro\|PRO\)\' . idlwave-mode) (\.srt\' . srecode-template-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|lha\|zoo\|[jew]ar\|xpi\|rar\|cbr\|7z\|ARC\|ZIP\|LZH\|LHA\|ZOO\|[JEW]AR\|XPI\|RAR\|CBR\|7Z\)\' . archive-mode) (\.oxt\' . archive-mode) (\.\(deb\|[oi]pk\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (\`/tmp/fol/ . text-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.x[ms]l\' . xml-mode) (\.dbk\' . xml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.jsm?\' . javascript-mode) (\.json\' . javascript-mode) (\.jsx\' . js-jsx-mode) (\.[ds]?vh?\' . verilog-mode) (\.by\' . bovine-grammar-mode) (\.wy\' . wisent-grammar-mode) ([:/\]\..*\(emacs\|gnus\|viper\)\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.ld[si]?\' . ld-script-mode) (ld\.?script\' . ld-script-mode) (\.xs\' . c-mode) (\.x[abdsru]?[cnw]?\' . ld-script-mode) (\.zone\' . dns-mode) (\.soa\' . dns-mode) (\.asd\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (\.\(?:PDF\|DVI\|OD[FGPST]\|DOCX?\|XLSX?\|PPTX?\|pdf\|djvu\|dvi\|od[fgpst]\|docx?\|xlsx?\|pptx?\)\' . doc-view-mode-maybe) (configure\.\(ac\|in\)\' . autoconf-mode) (\.s\(v\|iv\|ieve\)\' . sieve-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.g\' . antlr-mode) (\.mod\' . m2-mode) (\.ses\' . ses-mode) (\.docbook\' . sgml-mode) (\.com\' . dcl-mode) (/config\.\(?:bat\|log\)\' . fundamental-mode) (\.\(?:[iI][nN][iI]\|[lL][sS][tT]\|[rR][eE][gG]\|[sS][yY][sS]\)\' . conf-mode) (\.la\' . conf-unix-mode) (\.ppd\' . conf-ppd-mode) (java.+\.conf\' . conf-javaprop-mode) (\.properties\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-javaprop-mode) (\.toml\' . conf-toml-mode) (\.desktop\' . conf-desktop-mode) (\`/etc/\(?:DIR_COLORS\|ethers\|.?fstab\|.*hosts\|lesskey\|login\.?de\(?:fs\|vperm\)\|magic\|mtab\|pam\.d/.*\|permissions\(?:\.d/.+\)?\|protocols\|rpc\|services\)\' . conf-space-mode) (\`/etc/\(?:acpid?/.+\|aliases\(?:\.d/.+\)?\|default/.+\|group-?\|hosts\..+\|inittab\|ksysguarddrc\|opera6rc\|passwd-?\|shadow-?\|sysconfig/.+\)\' . conf-mode) ([cC]hange[lL]og[-.][-0-9a-z]+\' . change-log-mode) (/\.?\(?:gitconfig\|gnokiirc\|hgrc\|kde.*rc\|mime\.types\|wgetrc\)\' . conf-mode) (/\.\(?:enigma\|gltron\|gtk\|hxplayer\|net\|neverball\|qt/.+\|realplayer\|scummvm\|sversion\|sylpheed/.+\|xmp\)rc\' . conf-mode) (/\.\(?:gdbtkinit\|grip\|orbital/.+txt\|rhosts\|tuxracer/options\)\' . conf-mode) (/\.?X\(?:default\|resource\|re\)s\> . conf-xdefaults-mode) (/X11.+app-defaults/\|\.ad\' . conf-xdefaults-mode) (/X11.+locale/.+/Compose\' . conf-colon-mode) (/X11.+locale/compose\.dir\' . conf-javaprop-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' nil t) (\.\(?:orig\|in\|[bB][aA][kK]\)\' nil t) ([/.]c\(?:on\)?f\(?:i?g\)?\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-mode-maybe) (\.[1-9]\' . nroff-mode) (\.tgz\' . tar-mode) (\.tbz2?\' . tar-mode) (\.txz\' . tar-mode) (\.tzst\' . tar-mode))
-
-*** COMMENT ESS
- #+BEGIN_SRC emacs-lisp
-   ;; (use-package ess
-   ;;  :ensure t
-   ;;  :init (require 'ess-site))
- #+END_SRC
-
- #+RESULTS:
 
 *** Ruby
      #+BEGIN_SRC emacs-lisp
@@ -662,152 +566,109 @@
     #+RESULTS:
     : ((\.apib\' . apib-mode) (\.m?js\' . js2-mode) (\.ya?ml$ . yaml-mode) (\.editorconfig\' . editorconfig-conf-mode) (\.jl\' . julia-mode) (/git-rebase-todo\' . git-rebase-mode) (\.md\' . markdown-mode) (\.markdown\' . markdown-mode) (\.\(plantuml\|pum\|plu\)\' . plantuml-mode) (\.jsx\' . rjsx-mode) (\.rs\' . rust-mode) (\.\(e?ya?\|ra\)ml\' . yaml-mode) (\.gpg\(~\|\.~[0-9]+~\)?\' nil epa-file) (\.\(?:3fr\|a\(?:rw\|vs\)\|bmp[23]?\|c\(?:als?\|myka?\|r[2w]\|u[rt]\)\|d\(?:c[mrx]\|ds\|ng\|px\)\|f\(?:ax\|its\)\|gif\(?:87\)?\|hrz\|ic\(?:on\|[bo]\)\|j\(?:2c\|ng\|p\(?:eg\|[2cg]\)\)\|k\(?:25\|dc\)\|m\(?:iff\|ng\|rw\|s\(?:l\|vg\)\|tv\)\|nef\|o\(?:rf\|tb\)\|p\(?:bm\|c\(?:ds\|[dltx]\)\|db\|ef\|gm\|i\(?:ct\|x\)\|jpeg\|n\(?:g\(?:24\|32\|8\)\|[gm]\)\|pm\|sd\|tif\|wp\)\|r\(?:a[fs]\|gb[ao]?\|l[ae]\)\|s\(?:c[rt]\|fw\|gi\|r[2f]\|un\|vgz?\)\|t\(?:ga\|i\(?:ff\(?:64\)?\|le\|m\)\|tf\)\|uyvy\|v\(?:da\|i\(?:car\|d\|ff\)\|st\)\|w\(?:bmp\|pg\)\|x\(?:3f\|bm\|cf\|pm\|[cv]\)\|y\(?:cbcra?\|uv\)\)\' . image-mode) (\.elc\' . elisp-byte-code-mode) (\.zst\' nil jka-compr) (\.dz\' nil jka-compr) (\.xz\' nil jka-compr) (\.lzma\' nil jka-compr) (\.lz\' nil jka-compr) (\.g?z\' nil jka-compr) (\.bz2\' nil jka-compr) (\.Z\' nil jka-compr) (\.vr[hi]?\' . vera-mode) (\(?:\.\(?:rbw?\|ru\|rake\|thor\|jbuilder\|rabl\|gemspec\|podspec\)\|/\(?:Gem\|Rake\|Cap\|Thor\|Puppet\|Berks\|Vagrant\|Guard\|Pod\)file\)\' . ruby-mode) (\.re?st\' . rst-mode) (\.py[iw]?\' . python-mode) (\.m\' . octave-maybe-mode) (\.less\' . less-css-mode) (\.scss\' . scss-mode) (\.awk\' . awk-mode) (\.\(u?lpc\|pike\|pmod\(\.in\)?\)\' . pike-mode) (\.idl\' . idl-mode) (\.java\' . java-mode) (\.m\' . objc-mode) (\.ii\' . c++-mode) (\.i\' . c-mode) (\.lex\' . c-mode) (\.y\(acc\)?\' . c-mode) (\.h\' . c-or-c++-mode) (\.c\' . c-mode) (\.\(CC?\|HH?\)\' . c++-mode) (\.[ch]\(pp\|xx\|\+\+\)\' . c++-mode) (\.\(cc\|hh\)\' . c++-mode) (\.\(bat\|cmd\)\' . bat-mode) (\.[sx]?html?\(\.[a-zA-Z_]+\)?\' . mhtml-mode) (\.svgz?\' . image-mode) (\.svgz?\' . xml-mode) (\.x[bp]m\' . image-mode) (\.x[bp]m\' . c-mode) (\.p[bpgn]m\' . image-mode) (\.tiff?\' . image-mode) (\.gif\' . image-mode) (\.png\' . image-mode) (\.jpe?g\' . image-mode) (\.te?xt\' . text-mode) (\.[tT]e[xX]\' . tex-mode) (\.ins\' . tex-mode) (\.ltx\' . latex-mode) (\.dtx\' . doctex-mode) (\.org\' . org-mode) (\.el\' . emacs-lisp-mode) (Project\.ede\' . emacs-lisp-mode) (\.\(scm\|stk\|ss\|sch\)\' . scheme-mode) (\.l\' . lisp-mode) (\.li?sp\' . lisp-mode) (\.[fF]\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.\(dpr\|DPR\)\' . delphi-mode) (\.ad[abs]\' . ada-mode) (\.ad[bs].dg\' . ada-mode) (\.\([pP]\([Llm]\|erl\|od\)\|al\)\' . perl-mode) (Imakefile\' . makefile-imake-mode) (Makeppfile\(?:\.mk\)?\' . makefile-makepp-mode) (\.makepp\' . makefile-makepp-mode) (\.mk\' . makefile-bsdmake-mode) (\.make\' . makefile-bsdmake-mode) (GNUmakefile\' . makefile-gmake-mode) ([Mm]akefile\' . makefile-bsdmake-mode) (\.am\' . makefile-automake-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.[sS]\' . asm-mode) (\.asm\' . asm-mode) (\.css\' . css-mode) (\.mixal\' . mixal-mode) (\.gcov\' . compilation-mode) (/\.[a-z0-9-]*gdbinit . gdb-script-mode) (-gdb\.gdb . gdb-script-mode) ([cC]hange\.?[lL]og?\' . change-log-mode) ([cC]hange[lL]og[-.][0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ckz]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\.bash\' . sh-mode) (\(/\|\`\)\.\(bash_\(profile\|history\|log\(in\|out\)\)\|z?log\(in\|out\)\)\' . sh-mode) (\(/\|\`\)\.\(shrc\|zshrc\|m?kshrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.m[mes]\' . nroff-mode) (\.man\' . nroff-mode) (\.sty\' . latex-mode) (\.cl[so]\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.bst\' . bibtex-style-mode) (\.sql\' . sql-mode) (\.m[4c]\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.i?tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f9[05]\' . f90-mode) (\.f0[38]\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.\(pro\|PRO\)\' . idlwave-mode) (\.srt\' . srecode-template-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|lha\|zoo\|[jew]ar\|xpi\|rar\|cbr\|7z\|ARC\|ZIP\|LZH\|LHA\|ZOO\|[JEW]AR\|XPI\|RAR\|CBR\|7Z\)\' . archive-mode) (\.oxt\' . archive-mode) (\.\(deb\|[oi]pk\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (\`/tmp/fol/ . text-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.x[ms]l\' . xml-mode) (\.dbk\' . xml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.jsm?\' . javascript-mode) (\.json\' . javascript-mode) (\.jsx\' . js-jsx-mode) (\.[ds]?vh?\' . verilog-mode) (\.by\' . bovine-grammar-mode) (\.wy\' . wisent-grammar-mode) ([:/\]\..*\(emacs\|gnus\|viper\)\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.ld[si]?\' . ld-script-mode) (ld\.?script\' . ld-script-mode) (\.xs\' . c-mode) (\.x[abdsru]?[cnw]?\' . ld-script-mode) (\.zone\' . dns-mode) (\.soa\' . dns-mode) (\.asd\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (\.\(?:PDF\|DVI\|OD[FGPST]\|DOCX?\|XLSX?\|PPTX?\|pdf\|djvu\|dvi\|od[fgpst]\|docx?\|xlsx?\|pptx?\)\' . doc-view-mode-maybe) (configure\.\(ac\|in\)\' . autoconf-mode) (\.s\(v\|iv\|ieve\)\' . sieve-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.g\' . antlr-mode) (\.mod\' . m2-mode) (\.ses\' . ses-mode) (\.docbook\' . sgml-mode) (\.com\' . dcl-mode) (/config\.\(?:bat\|log\)\' . fundamental-mode) (\.\(?:[iI][nN][iI]\|[lL][sS][tT]\|[rR][eE][gG]\|[sS][yY][sS]\)\' . conf-mode) (\.la\' . conf-unix-mode) (\.ppd\' . conf-ppd-mode) (java.+\.conf\' . conf-javaprop-mode) (\.properties\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-javaprop-mode) (\.toml\' . conf-toml-mode) (\.desktop\' . conf-desktop-mode) (\`/etc/\(?:DIR_COLORS\|ethers\|.?fstab\|.*hosts\|lesskey\|login\.?de\(?:fs\|vperm\)\|magic\|mtab\|pam\.d/.*\|permissions\(?:\.d/.+\)?\|protocols\|rpc\|services\)\' . conf-space-mode) (\`/etc/\(?:acpid?/.+\|aliases\(?:\.d/.+\)?\|default/.+\|group-?\|hosts\..+\|inittab\|ksysguarddrc\|opera6rc\|passwd-?\|shadow-?\|sysconfig/.+\)\' . conf-mode) ([cC]hange[lL]og[-.][-0-9a-z]+\' . change-log-mode) (/\.?\(?:gitconfig\|gnokiirc\|hgrc\|kde.*rc\|mime\.types\|wgetrc\)\' . conf-mode) (/\.\(?:enigma\|gltron\|gtk\|hxplayer\|net\|neverball\|qt/.+\|realplayer\|scummvm\|sversion\|sylpheed/.+\|xmp\)rc\' . conf-mode) (/\.\(?:gdbtkinit\|grip\|orbital/.+txt\|rhosts\|tuxracer/options\)\' . conf-mode) (/\.?X\(?:default\|resource\|re\)s\> . conf-xdefaults-mode) (/X11.+app-defaults/\|\.ad\' . conf-xdefaults-mode) (/X11.+locale/.+/Compose\' . conf-colon-mode) (/X11.+locale/compose\.dir\' . conf-javaprop-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' nil t) (\.\(?:orig\|in\|[bB][aA][kK]\)\' nil t) ([/.]c\(?:on\)?f\(?:i?g\)?\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-mode-maybe) (\.[1-9]\' . nroff-mode) (\.tgz\' . tar-mode) (\.tbz2?\' . tar-mode) (\.txz\' . tar-mode) (\.tzst\' . tar-mode))
 
-** Tools
-*** Iedit
-     #+BEGIN_SRC emacs-lisp
-       (use-package iedit :bind ("C-;" . iedit-mode))
+* Tools
+** Copy as format
+   #+BEGIN_SRC emacs-lisp
+     (use-package copy-as-format
+       :commands (copy-as-format-github
+		  copy-as-format-html
+		  copy-as-format-markdown
+		  copy-as-format-org-mode
+		  copy-as-format-slack))
+   #+END_SRC
 
-       (use-package evil-iedit-state
-	 :after iedit
-	 :bind ("C-;" . evil-iedit-state/iedit-mode))
-     #+END_SRC
+   #+RESULTS:
 
-     #+RESULTS:
-     : evil-iedit-state/iedit-mode
-*** Yasnippet
+** read-aloud
+   #+BEGIN_SRC emacs-lisp
+     (use-package read-aloud
+       :commands (read-aloud-this read-aloud-buf)
+       :config (setq read-aloud-engine "say"))
 
-    #+BEGIN_SRC emacs-lisp
-      (use-package yasnippet :hook (after-init . yas-global-mode))
-      ;; :config (yas-global-mode 1)
+   #+END_SRC
 
-      ;; (use-package yasnippet-snippets :ensure t)
-    #+END_SRC
+** centered window mode
 
-    #+RESULTS:
-    | org-drill--transfer-optimal-factor-matrix | editorconfig-mode | smartparens-global-mode | yas-global-mode | global-company-mode | global-flycheck-mode | straight-finalize-transaction | tramp-register-archive-file-name-handler | table--make-cell-map |
+   #+BEGIN_SRC emacs-lisp
+     (use-package centered-window
+       :commands centered-window-mode
+       :config (setq cwm-centered-window-width 200))
 
-*** Copy as format
-    #+BEGIN_SRC emacs-lisp
-      (use-package copy-as-format
-	:commands (copy-as-format-github
-		   copy-as-format-html
-		   copy-as-format-markdown
-		   copy-as-format-org-mode
-		   copy-as-format-slack))
-    #+END_SRC
+     (use-package winner
+       :commands (winner-undo window-redo)
+       :config (winner-mode))
+   #+END_SRC
 
-    #+RESULTS:
+   #+RESULTS:
 
-*** Smartparens
-    #+BEGIN_SRC emacs-lisp
-      (use-package smartparens
-	:hook (after-init . smartparens-global-mode))
-    #+END_SRC
+** Dictionaries
+   #+BEGIN_SRC emacs-lisp
+     (use-package google-translate
+       :commands google-translate-at-point
+       :init
+       (setq google-translate-default-source-language "en")
+       (setq google-translate-default-target-language "vi"))
 
-    #+RESULTS:
-    : t
+     (use-package osx-dictionary
+       :commands (osx-dictionary-search-word-at-point osx-dictionary-search-input))
+   #+END_SRC
 
-*** Editorconfig
-    #+BEGIN_SRC emacs-lisp
-      (use-package editorconfig
-	:delight editorconfig-mode
-	:hook (after-init . editorconfig-mode))
-    #+END_SRC
-
-    #+RESULTS:
-    | smartparens-global-mode | org-drill--transfer-optimal-factor-matrix | indent-guide-global-mode | doom-modeline-mode | evil-mode | benchmark-init/deactivate | tramp-register-archive-file-name-handler |
-
-*** read-aloud
-    #+BEGIN_SRC emacs-lisp
-      (use-package read-aloud
-	:commands (read-aloud-this read-aloud-buf)
-	:config (setq read-aloud-engine "say"))
-
-    #+END_SRC
-
-*** centered window mode
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package centered-window
-	:commands centered-window-mode
-	:config (setq cwm-centered-window-width 200))
-
-      (use-package winner
-	:commands (winner-undo window-redo)
-	:config (winner-mode))
-    #+END_SRC
-
-    #+RESULTS:
-
-*** Google translate
-    #+BEGIN_SRC emacs-lisp
-      (use-package google-translate
-	:commands google-translate-at-point
-	:init
-	(setq google-translate-default-source-language "en")
-	(setq google-translate-default-target-language "vi"))
-    #+END_SRC
-
-    #+RESULTS:
-    : t
-
-*** Move Line
-    #+BEGIN_SRC emacs-lisp
-      (use-package move-text
-	;; :config (move-text-default-bindings)
-	:bind (
-	       ;; :map evil-visual-state-map ("s-p" . move-text-region-up) ("s-n" . move-text-region-down)
-	       :map evil-normal-state-map
-	       ("s-p" . move-text-line-up)
-	       ("s-n" . move-text-line-down)))
-    #+END_SRC
-
-    #+RESULTS:
-    : move-text-line-down
-
-* Finalize
-  #+BEGIN_SRC emacs-lisp
-    (setq ansi-color-names-vector ["#292b2d" "#ce527a" "#2d9474" "#bfa325" "#4e97d6" "#bb6dc3" "#299ba2" "#e4e4e4"])
-    ;; (setq ansi-color-names-vector ["#000000" "red" "#00FF00" "yellow" "#003CFF" "#FF00FF" "#00FFFF" "#FFFFFF"])
-    ;; (setq ansi-color-names-vector ["black" "red3" "green3" "yellow3" "blue2" "magenta3" "cyan3" "gray90"])
-  #+END_SRC
-
-  #+RESULTS:
-  | 0.1 |
+   #+RESULTS:
 
 * Expirements
 
 #+BEGIN_SRC emacs-lisp
-(org-version)
+  (defun sl/ruby-copy-generated-spec-at-point ()
+    (interactive)
+    (let* ((method-name (ivy-thing-at-point))
+	   (model-name (f-base buffer-file-name)))
+      (kill-new (format "describe '#%s' do\n  let(:%s) { create(:%s) }\n  let(:subject) { %s.%s }\nend"
+			method-name
+			model-name
+			model-name
+			model-name
+			method-name))))
+
+
+  (defun layout-switch-by-pos (pos)
+    "Switch to perspective of position POS."
+    (let ((persp-to-switch
+	   (nth pos (persp-names-current-frame-fast-ordered))))
+      (if persp-to-switch
+	  (persp-switch persp-to-switch))))
+
+  (dolist (i (number-sequence 9 0 -1))
+    (eval `(defun ,(intern (format "persp-switch-to-%s" i)) nil
+	     ,(format "Switch to layout %s.\n%s"
+		      i "See `layout-switch-by-pos' for details.")
+	     (interactive)
+	     (layout-switch-by-pos ,(if (eq 0 i) 9 (1- i))))))
+
+  (defun sl/persp-layout ()
+    "Switch to perspective of position POS."
+    (interactive)
+    (let* ((persp-current-name (safe-persp-name (get-current-persp)))
+	   (highlight-persps (lambda (elt idx)
+			       (format (if (string= elt persp-current-name) "%d *%s*" "%d %s")
+				       (+ idx 1)
+				       (if (string= elt "none") elt (f-base elt))))))
+      (string-join (seq-map-indexed highlight-persps (persp-names-current-frame-fast-ordered)) " | ")))
+
+  (defun layout-info ()
+    "Switch to perspective of position POS."
+    (interactive)
+    (minibuffer-message (sl/persp-layout)))
+
+  (defun sl/switch-buffer ()
+    "As `helm-mini' but restricts visible buffers by perspective."
+    (interactive)
+    (with-persp-buffer-list ()
+			    (ivy-switch-buffer)))
 #+END_SRC
-
-#+RESULTS:
-: 9.2.1
-
-#+BEGIN_SRC emacs-lisp
-(setq company-flx-limit 200)
-#+END_SRC
-
-#+RESULTS:
-: 10
 
 #+BEGIN_SRC emacs-lisp
 (setq vterm-timer-delay 0.005)
-#+END_SRC
-
-#+RESULTS:
-: 0.0005
-
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'comint-exec-hook (lambda () (evil-normal-state)))
-#+END_SRC
-
-#+RESULTS:
-| lambda | nil | (message change exec state) | (evil-normal-state) |
-
-#+RESULTS:
-: 0.5
-
-#+BEGIN_SRC emacs-lisp
 (setq lsp-ui-sideline-delay 0.5)
+(setq ansi-color-names-vector ["#292b2d" "#ce527a" "#2d9474" "#bfa325" "#4e97d6" "#bb6dc3" "#299ba2" "#e4e4e4"])
+(add-hook 'comint-exec-hook (lambda () (evil-normal-state)))
 #+END_SRC
