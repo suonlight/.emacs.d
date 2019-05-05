@@ -73,6 +73,32 @@
 	 (yaml-mode . indent-guide-mode)
 	 (js2-mode . indent-guide-mode)))
 
+
+(use-package iedit :bind ("C-;" . iedit-mode))
+
+(use-package evil-iedit-state
+  :after iedit
+  :bind ("C-;" . evil-iedit-state/iedit-mode))
+
+
+(use-package yasnippet :hook (after-init . yas-global-mode))
+
+(use-package smartparens
+  :hook (after-init . smartparens-global-mode))
+
+(use-package editorconfig
+  :delight editorconfig-mode
+  :hook (after-init . editorconfig-mode))
+
+
+(use-package move-text
+  ;; :config (move-text-default-bindings)
+  :bind (
+	 ;; :map evil-visual-state-map ("s-p" . move-text-region-up) ("s-n" . move-text-region-down)
+	 :map evil-normal-state-map
+	 ("s-p" . move-text-line-up)
+	 ("s-n" . move-text-line-down)))
+
 (load (concat user-emacs-directory "core/binding"))
 (load (concat user-emacs-directory "core/core-lib"))
 (load (concat user-emacs-directory "core/core-projects"))
