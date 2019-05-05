@@ -428,40 +428,40 @@
 	 :keymaps 'ruby-test-mode-map
 	 "<f5>"       #'dap-ruby-run-test-at-point)
 
-	;; (leader-define-key ruby-mode-map
-	;;   "d"    #'(:ignore t :which-key "debugger")
-	;;   "dn"   #'dap-next
-	;;   "di"   #'dap-step-in
-	;;   "do"   #'dap-step-out
-	;;   "dc"   #'dap-continue
-	;;   "dR"   #'dap-ui-repl
-	;;   "dr"   #'dap-restart-frame
-	;;   "ds"   #'(:ignore t :which-key "switch")
-	;;   "dss"  #'dap-switch-session
-	;;   "dst"  #'dap-switch-thread
-	;;   "dsf"  #'dap-switch-stack-frame
-	;;   "dsl"  #'dap-ui-locals
-	;;   "dsb"  #'dap-ui-breakpoints
-	;;   "dsS"  #'dap-ui-sessions
-	;;   "db"   #'(:ignore t :which-key "breakpoints")
-	;;   "dbt"  #'dap-breakpoint-toggle
-	;;   "dba"  #'dap-breakpoint-add
-	;;   "dbd"  #'dap-breakpoint-delete
-	;;   "dbc"  #'dap-breakpoint-condition
-	;;   "dbh"  #'dap-breakpoint-hit-condition
-	;;   "dbl"  #'dap-breakpoint-log-message
-	;;   "de"   #'(:ignore t #':which-key "eval")
-	;;   "dee"  #'dap-eval
-	;;   "der"  #'dap-eval-region
-	;;   "des"  #'dap-eval-thing-at-point
-	;;   "deii" #'dap-ui-inspect
-	;;   "deir" #'dap-ui-inspect-region
-	;;   "deis" #'dap-ui-inspect-thing-at-point
-	;;   "d."   #'dap-hydra
-	;;   "dt"   #'(:ignore t :which-key "test")
-	;;   "dtt"  #'dap-ruby-run-test-at-point
-	;;   "dtb"  #'dap-ruby-run-test
-	;;   "dd"   #'dap-debug)
+	(leader-define-key ruby-mode-map
+	  "d"    #'(:ignore t :which-key "debugger")
+	  "dn"   #'dap-next
+	  "di"   #'dap-step-in
+	  "do"   #'dap-step-out
+	  "dc"   #'dap-continue
+	  "dR"   #'dap-ui-repl
+	  "dr"   #'dap-restart-frame
+	  "ds"   #'(:ignore t :which-key "switch")
+	  "dss"  #'dap-switch-session
+	  "dst"  #'dap-switch-thread
+	  "dsf"  #'dap-switch-stack-frame
+	  "dsl"  #'dap-ui-locals
+	  "dsb"  #'dap-ui-breakpoints
+	  "dsS"  #'dap-ui-sessions
+	  "db"   #'(:ignore t :which-key "breakpoints")
+	  "dbt"  #'dap-breakpoint-toggle
+	  "dba"  #'dap-breakpoint-add
+	  "dbd"  #'dap-breakpoint-delete
+	  "dbc"  #'dap-breakpoint-condition
+	  "dbh"  #'dap-breakpoint-hit-condition
+	  "dbl"  #'dap-breakpoint-log-message
+	  "de"   #'(:ignore t #':which-key "eval")
+	  "dee"  #'dap-eval
+	  "der"  #'dap-eval-region
+	  "des"  #'dap-eval-thing-at-point
+	  "deii" #'dap-ui-inspect
+	  "deir" #'dap-ui-inspect-region
+	  "deis" #'dap-ui-inspect-thing-at-point
+	  "d."   #'dap-hydra
+	  "dt"   #'(:ignore t :which-key "test")
+	  "dtt"  #'dap-ruby-run-test-at-point
+	  "dtb"  #'dap-ruby-run-test
+	  "dd"   #'dap-debug)
 
 	(general-define-key
 	 :states '(normal visual emacs)
