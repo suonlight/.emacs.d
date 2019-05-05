@@ -318,6 +318,8 @@
  "wU"         #'winner-redo
  ;; "wV"         #'split-window-right-and-focus
  ;; "wW"         #'ace-window
+ "w2"         #'split-window-vertically-2
+ "w3"         #'split-window-vertically-3
  "wc"         #'evil-window-delete
  "wC"         #'centered-window-mode
  "wf"         #'follow-mode

@@ -262,8 +262,33 @@
   "Copy this file"
   (interactive)
   (dired-jump)
-  (dired-do-copy))
+  (dired-do-copy)
+  (dired-find-file))
 
 (defun mouse-dumb-jump-go ()
   ""
   (dumb-jump-go))
+
+(defun split-window-vertically-2 ()
+  "Split screen to 2 windows"
+  (interactive)
+  (let ((w (selected-window)))
+    (delete-other-windows)
+    (split-window-right)
+    (select-window (next-window))
+    (awesome-tab-backward-tab)
+    (select-window w)))
+
+(defun split-window-vertically-3 ()
+  "Split screen to 2 windows"
+  (interactive)
+  (let ((w (selected-window)))
+    (delete-other-windows)
+    (split-window-right)
+    (select-window (next-window))
+    (awesome-tab-backward-tab)
+    (split-window-right)
+    (select-window (next-window))
+    (awesome-tab-backward-tab)
+    (balance-windows-area)
+    (select-window w)))
