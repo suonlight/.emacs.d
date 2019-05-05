@@ -8,6 +8,15 @@
  "s-<f12>" #'quit-window
  "q"       #'quit-window)
 
+
+(general-define-key
+ :keymaps 'osx-dictionary-mode-map
+ :states 'normal
+ "r"       #'osx-dictionary-read-word
+ "o"       #'osx-dictionary-open-dictionary\.app
+ "s"       #'osx-dictionary-search-input
+ "q"       #'osx-dictionary-quit)
+
 (general-define-key
  :keymaps 'racer-help-mode-map
  :states 'normal
@@ -433,6 +442,7 @@
  "xfo"       #'copy-as-format-org-mode
  "xfs"       #'copy-as-format-slack
  "xgt"       #'google-translate-at-point
+ "xwd"       #'osx-dictionary-search-word-at-point
  "xs"        #'read-aloud-this
 
  ;; Others
