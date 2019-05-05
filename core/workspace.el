@@ -42,6 +42,7 @@
        (string= "*Org-Babel Error Output*" name)
        (string= "*Org Clock*" name)
        (string= "*Org Agenda*" name)
+       (string= "*Calendar*" name)
        (string= " *which-key*" name)
        (string= " *LV*" name)
        (and (string-prefix-p "magit" name)
