@@ -321,7 +321,7 @@
 	   "Employment Hero Task"
 	   entry
 	   (file "~/org-modes/employmenthero.org")
-	   "* TODO %:initial\n\nSource: %:link\nCaptured On:%U\n\n")
+	   "* TODO %:initial\n\nGit Branch: %(git-branch-by-title \"%:initial\" \"%:link\")\nSource: %:link\nCaptured On:%U\n\n")
 	  ("e"
 	   "Employment Hero Task"
 	   entry
@@ -498,3 +498,7 @@ This function is heavily adapted from `org-between-regexps-p'."
 	    ;; Go to the line before the inserted "#+begin_ .." line
 	    (beginning-of-line (if at-bol -1 0)))))
     (message "Point is not in an Org block")))
+
+(defun git-branch-by-title (title link)
+  "Auto generate git branch by title"
+  (message "ft/%s--%s" (s-dashed-words title) (car (last (s-split "/" link)))))
