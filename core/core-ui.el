@@ -19,6 +19,10 @@
 (use-package all-the-icons
   :defer 2)
 
+(use-package font-lock+
+  :straight
+  (font-lock+ :repo "emacsmirror/font-lock-plus" :host github :type git))
+
 (use-package all-the-icons-dired
   :defer 2
   :hook (dired-mode . all-the-icons-dired-mode)
