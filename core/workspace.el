@@ -30,6 +30,7 @@
        (string-prefix-p "*prodigy" name)
        (string-prefix-p "*RuboCop" name)
        (string-prefix-p "TAGS" name)
+       (string-prefix-p "magit" name)
        (string= "*osx-dictonary*" name)
        (string= "*Google Translate*" name)
        (string= "*Flycheck errors*" name)
