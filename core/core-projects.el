@@ -1,7 +1,7 @@
 ;;; -*- lexical-binding: t; -*-
 
 (use-package projectile
-  :commands (projectile-mode projectile-project-p projectile-project-root)
+  :commands (projectile-mode projectile-project-p projectile-project-root sl/persp-hydra/body)
   :custom
   (projectile-require-project-root nil))
 

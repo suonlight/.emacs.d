@@ -630,35 +630,6 @@
 			method-name))))
 
 
-  (defun layout-switch-by-pos (pos)
-    "Switch to perspective of position POS."
-    (let ((persp-to-switch
-	   (nth pos (persp-names-current-frame-fast-ordered))))
-      (if persp-to-switch
-	  (persp-switch persp-to-switch))))
-
-  (dolist (i (number-sequence 9 0 -1))
-    (eval `(defun ,(intern (format "persp-switch-to-%s" i)) nil
-	     ,(format "Switch to layout %s.\n%s"
-		      i "See `layout-switch-by-pos' for details.")
-	     (interactive)
-	     (layout-switch-by-pos ,(if (eq 0 i) 9 (1- i))))))
-
-  (defun sl/persp-layout ()
-    "Switch to perspective of position POS."
-    (interactive)
-    (let* ((persp-current-name (safe-persp-name (get-current-persp)))
-	   (highlight-persps (lambda (elt idx)
-			       (format (if (string= elt persp-current-name) "%d *%s*" "%d %s")
-				       (+ idx 1)
-				       (if (string= elt "none") elt (f-base elt))))))
-      (string-join (seq-map-indexed highlight-persps (persp-names-current-frame-fast-ordered)) " | ")))
-
-  (defun layout-info ()
-    "Switch to perspective of position POS."
-    (interactive)
-    (minibuffer-message (sl/persp-layout)))
-
   (defun sl/switch-buffer ()
     "As `helm-mini' but restricts visible buffers by perspective."
     (interactive)

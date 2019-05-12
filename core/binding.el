@@ -35,7 +35,8 @@
  "s-b"         #'ivy-switch-buffer
  "s-`"         #'multi-libvterm-projectile
  "<f10>"       #'toggle-maximize-buffer
- "<f11>"       #'(sl/awesome-tab-group-hydra/body :which-key "layouts")
+ ;; "<f11>"       #'(sl/awesome-tab-group-hydra/body :which-key "layouts")
+ "<f11>"       #'(sl/persp-hydra/body :which-key "layouts")
  "<f12>"       #'prodigy
  "s-<f12>"     #'list-processes-other-window
  "C-p"         #'counsel-projectile-find-file)
@@ -258,14 +259,14 @@
  "pk"         #'projectile-kill-buffers
  ;; "po"         #'org-projectile/goto-todos
  "pp"         #'counsel-projectile-switch-project
- ;; "pl"         #'ivy-persp-switch-project
+ "pl"         #'ivy-persp-switch-project
  "pr"         #'projectile-recentf
  ;; "pt"         #'neotree-find-project-root
  "pv"         #'projectile-vc
 
  ;; Layout
- ;; "l"          #'(sl/persp-hydra/body :which-key "layouts")
- "l"          #'(sl/awesome-tab-group-hydra/body :which-key "layouts")
+ "l"          #'(sl/persp-hydra/body :which-key "layouts")
+ ;; "l"          #'(sl/awesome-tab-group-hydra/body :which-key "layouts")
  ;; Files
  "f"          #'(:ignore t :which-key "files")
  "fyC"        #'projectile-copy-file-path-with-line-column
