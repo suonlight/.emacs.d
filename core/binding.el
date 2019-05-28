@@ -25,7 +25,6 @@
 (general-define-key
  :keymaps 'global-map
  :states '(normal visual insert emacs)
- "s-<mouse-1>"  #'dumb-jump-go
  "s-k"         #'awesome-tab-forward-tab
  "s-j"         #'awesome-tab-backward-tab
  "s-}"         #'awesome-tab-forward-tab
@@ -37,9 +36,18 @@
  "<f10>"       #'toggle-maximize-buffer
  ;; "<f11>"       #'(sl/awesome-tab-group-hydra/body :which-key "layouts")
  "<f11>"       #'(sl/persp-hydra/body :which-key "layouts")
- "<f12>"       #'prodigy
- "s-<f12>"     #'list-processes-other-window
+ "<f12>"       #'prodigy-as-default-layout
+ "s-<f12>"     #'list-processes-other-window)
+
+(general-define-key
+ :keymaps 'global-map
+ :states '(normal visual)
  "C-p"         #'counsel-projectile-find-file)
+
+(general-define-key
+ :keymaps 'ruby-mode-map
+ :states '(normal visual insert emacs)
+ "s-<mouse-1>"  #'dumb-jump-go)
 
 (general-define-key
  :keymaps 'global-map
@@ -72,8 +80,7 @@
 
 (general-define-key
  :states '(normal visual)
- "s"   #'evil-avy-goto-word-or-subword-1
- "gj"  #'evil-avy-goto-char)
+ "s"   #'evil-avy-goto-word-or-subword-1)
 
 (general-create-definer leader-define-key
   ;; :prefix my-leader

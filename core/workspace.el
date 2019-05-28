@@ -120,6 +120,7 @@
     "Switch to perspective of position POS."
     (let ((persp-to-switch
 	   (nth pos (persp-names-current-frame-fast-ordered))))
+      (setq sl/persp-last-layout (safe-persp-name (get-current-persp)))
       (if persp-to-switch
 	  (persp-switch persp-to-switch))))
 
@@ -129,6 +130,13 @@
 		      i "See `layout-switch-by-pos' for details.")
 	     (interactive)
 	     (sl/layout-switch-by-pos ,(if (eq 0 i) 9 (1- i))))))
+
+  (defvar sl/persp-last-layout "none")
+  (defun persp-switch-last-layout ()
+    (interactive)
+    (let ((persp-current-name (safe-persp-name (get-current-persp))))
+      (persp-switch sl/persp-last-layout)
+      (setq sl/persp-last-layout persp-current-name)))
 
   (defun sl/persp-layout ()
     "Switch to perspective of position POS."
@@ -158,25 +166,27 @@
     ("7" persp-switch-to-7)
     ("8" persp-switch-to-8)
     ("9" persp-switch-to-9)
+    ("<tab>" persp-switch-last-layout)
 
     ("d" persp-kill :column "Actions")
     ("r" persp-rename)
     ("s" persp-save-state-to-file "Save Layout")
     ("L" persp-load-state-from-file "Load Layout")
     ("q" nil "cancel" :color blue :column nil))
-  (defun ivy-persp-switch-project (arg)
-    (interactive "P")
-    (ivy-read "Switch to Project Perspective: "
-	      (if (projectile-project-p)
-		  (cons (abbreviate-file-name (projectile-project-root))
-			(projectile-relevant-known-projects))
-		projectile-known-projects)
-	      :action (lambda (project)
-			(let* ((persp-reset-windows-on-nil-window-conf t)
-			       (exists (persp-with-name-exists-p project)))
-			  (persp-switch project)
-			  (unless exists
-			    (progn
-			      (let ((projectile-completion-system 'ivy))
-				(projectile-switch-project-by-name project))))))))
   (persp-mode 1))
+
+(defun ivy-persp-switch-project (arg)
+  (interactive "P")
+  (ivy-read "Switch to Project Perspective: "
+	    (if (projectile-project-p)
+		(cons (abbreviate-file-name (projectile-project-root))
+		      (projectile-relevant-known-projects))
+	      projectile-known-projects)
+	    :action (lambda (project)
+		      (let* ((persp-reset-windows-on-nil-window-conf t)
+			     (exists (persp-with-name-exists-p project)))
+			(persp-switch project)
+			(unless exists
+			  (progn
+			    (let ((projectile-completion-system 'ivy))
+			      (projectile-switch-project-by-name project))))))))

@@ -292,3 +292,8 @@
     (awesome-tab-backward-tab)
     (balance-windows-area)
     (select-window w)))
+
+(defun prodigy-as-default-layout ()
+  (interactive)
+  (sl/layout-switch-by-pos 0)
+  (prodigy))
