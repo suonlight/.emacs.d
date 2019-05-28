@@ -288,21 +288,16 @@
 	   "* TODO %?\n:PROPERTIES:\n\n:END:\nDEADLINE: %^T \n %i\n"
 	   )
 	  ("l"
-	   "learn"
+	   "Learn"
 	   entry
 	   (file "~/org-modes/learn.org")
 	   "* %? :drill:\n"
 	   )
-	  ("c"
-	   "Reading List"
-	   entry
-	   (file+headline "~/org-modes/personal.org" "Reading List")
-	   "* TODO %?\n")
 	  ("p"
-	   "Notes"
+	   "Personal"
 	   entry
-	   (file "~/org-modes/notes.org")
-	   "* %:description\n\nSource: %:link\nCaptured On:%U\n\n%:initial\n\n")
+	   (file "~/org-modes/personal.org")
+	   "* %i\n\nCaptured On:%U\n\n")
 	  ("t"
 	   "Token"
 	   plain
