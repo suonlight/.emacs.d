@@ -203,6 +203,7 @@
   :init
   (setq org-imenu-depth 3)
   (setq org-confirm-babel-evaluate nil)
+  (setq org-log-done 'time)
   (defvar org-babel-do-load-languages-p nil)
   :config
   ;; (defalias 'origin-org-babel-execute-src-block 'org-babel-execute-src-block)
@@ -312,6 +313,11 @@
 	   "* %:description\n\nSource: %:link\nCaptured On:%U\n\n%:initial\n\n"
 	   :immediate-finish
            :prepend)
+	  ("z"
+	   "Capture Notes"
+	   entry
+	   (file "~/org-modes/notes.org")
+	   "* %i\n\nCaptured On:%U\n\n%c")
 	  ("E"
 	   "Employment Hero Task"
 	   entry
@@ -497,3 +503,26 @@ This function is heavily adapted from `org-between-regexps-p'."
 (defun git-branch-by-title (title link)
   "Auto generate git branch by title"
   (message "ft/%s--%s" (s-dashed-words title) (car (last (s-split "/" link)))))
+
+(defhydra hydra-org-babel
+  (:color pink :hint nil)
+  ("n" org-babel-next-src-block "next src block" :column "Move")
+  ("p" org-babel-previous-src-block "prev src block")
+  ("o" org-babel-open-src-block-result)
+  ("g" org-babel-goto-named-src-block)
+  ("r" org-babel-goto-named-result)
+  ("I" org-babel-view-src-block-info)
+  ("s" org-split-block "split src block" :column "Actions")
+  ("k" org-babel-remove-result-one-or-many "remove result")
+  ("a" org-babel-sha1-hash)
+  ("b" org-babel-execute-buffer)
+  ("c" org-babel-check-src-block)
+  ("d" org-babel-demarcate-block)
+  ("e" org-babel-execute-maybe)
+  ("f" org-babel-tangle-file)
+  ("i" org-babel-lob-ingest)
+  ("j" org-babel-insert-header-arg)
+  ("l" org-babel-load-in-session)
+  ("S" org-babel-execute-subtree)
+  ("t" org-babel-tangle)
+  ("q" nil "cancel" :color blue :column nil))

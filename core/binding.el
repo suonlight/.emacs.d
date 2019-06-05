@@ -145,7 +145,32 @@
   "L"          #'org-shiftright
   "r"          #'org-drill-sound
   "l"          #'org-drill-wrapper
+  "b"          #'(:ignore t :which-key "org-babel")
+  "b."         #'hydra-org-babel/body
   "bs"         #'org-split-block
+  "ba"         #'org-babel-sha1-hash
+  "bb"         #'org-babel-execute-buffer
+  "bc"         #'org-babel-check-src-block
+  "bd"         #'org-babel-demarcate-block
+  "be"         #'org-babel-execute-maybe
+  "bf"         #'org-babel-tangle-file
+  "bg"         #'org-babel-goto-named-src-block
+  "bi"         #'org-babel-lob-ingest
+  "bI"         #'org-babel-view-src-block-info
+  "bj"         #'org-babel-insert-header-arg
+  "bl"         #'org-babel-load-in-session
+  "bn"         #'org-babel-next-src-block
+  "bo"         #'org-babel-open-src-block-result
+  "bp"         #'org-babel-previous-src-block
+  "br"         #'org-babel-goto-named-result
+  "bS"         #'org-babel-execute-subtree
+  "bt"         #'org-babel-tangle
+  "bu"         #'org-babel-goto-src-block-head
+  "bv"         #'org-babel-expand-src-block
+  "bx"         #'org-babel-do-key-sequence-in-edit-buffer
+  "bz"         #'org-babel-switch-to-session
+  "bZ"         #'org-babel-switch-to-session-with-code
+  "bk"         #'org-babel-remove-result-one-or-many
   "dT"         #'org-time-stamp-inactive
   "dd"         #'org-deadline
   "ds"         #'org-schedule
@@ -186,7 +211,8 @@
   "tb" #'ruby-test-run
   "tt" #'ruby-test-run-at-point)
 
-(leader-define-key js2-mode-map
+;; (leader-define-key js2-mode-map
+(leader-define-key js-mode-map
   "gG" #'dumb-jump-go-other-window
   "gg" #'dumb-jump-go
   "gb" #'dumb-jump-back
