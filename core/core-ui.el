@@ -33,7 +33,7 @@
   :config
   (all-the-icons-ivy-setup))
 
-(defconst cycle-themes '(doom-one-light doom-one zenburn-theme))
+(defconst cycle-themes '(doom-one-light doom-one wombat))
 (defvar current-theme (car cycle-themes))
 
 (defun next-cycle-theme ()

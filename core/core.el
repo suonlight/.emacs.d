@@ -100,6 +100,8 @@
 	 ("s-p" . move-text-line-up)
 	 ("s-n" . move-text-line-down)))
 
+(use-package request)
+
 (load (concat user-emacs-directory "core/binding"))
 (load (concat user-emacs-directory "core/core-lib"))
 (load (concat user-emacs-directory "core/core-projects"))

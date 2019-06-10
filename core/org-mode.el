@@ -214,9 +214,6 @@
 	:after org
 	:config (advice-add 'org-babel-execute-src-block :around 'ob-async-org-babel-execute-src-block))
 
-      (use-package ob-rust
-	:after org)
-
       (use-package ob-tmux
 	;; Install package automatically (optional)
 	:after org
@@ -247,7 +244,6 @@
 	 (org . t)
 	 (screen . t)
 	 (shell . t)
-	 (rust . t)
 	 (plantuml . t)
 	 (C . t)
 	 (js . t)))
@@ -358,6 +354,10 @@
   ;; (add-hook 'org-capture-after-finalize-hook 'jws/org-capture-after-finalize)
 
   )
+
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode))
 
 (use-package evil-org
   :after org
