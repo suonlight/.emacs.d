@@ -5,7 +5,7 @@
   :straight (multi-libvterm :type git :host github :repo "suonlight/multi-libvterm"))
 
 (use-package vterm
-  :commands (multi-libvterm multi-libvterm-next multi-libvterm-prev multi-libvterm-dedicated-toggle multi-libvterm-projectile)
+  :commands (multi-libvterm multi-libvterm-next multi-libvterm-prev multi-libvterm-dedicated-toggle multi-libvterm-projectile toggle-tmux)
   :straight (vterm :type git :host github :repo "jixiuf/emacs-libvterm")
   :config
   (defun toggle-tmux ()
@@ -54,3 +54,9 @@
   (evil-define-key 'normal vterm-mode-map (kbd "i")        #'evil-insert-resume)
   (evil-define-key 'normal vterm-mode-map (kbd "o")        #'evil-insert-resume)
   (evil-define-key 'normal vterm-mode-map (kbd "<return>") #'evil-insert-resume))
+
+(require 'tramp)
+(setq tramp-default-method "ssh")
+
+(require 'tramp-sh nil t)
+(setf tramp-ssh-controlmaster-options (concat "-o SendEnv TRAMP=yes " tramp-ssh-controlmaster-options))
