@@ -2,6 +2,18 @@
 (use-package general)
 
 (general-define-key
+ :keymaps 'inf-ruby-mode-map
+ :states '(normal visual)
+ "o"       #'evil-insert-resume
+ "i"       #'evil-insert-resume)
+
+(general-define-key
+ :keymaps 'comint-mode-map
+ :states 'insert
+ "C-p"     #'comint-previous-input
+ "C-n"     #'comint-next-input)
+
+(general-define-key
  :keymaps 'process-menu-mode-map
  :states 'normal
  "d"       #'process-menu-delete-process
@@ -171,10 +183,12 @@
   "bz"         #'org-babel-switch-to-session
   "bZ"         #'org-babel-switch-to-session-with-code
   "bk"         #'org-babel-remove-result-one-or-many
+  "d"          #'(:ignore t :which-key "date")
   "dT"         #'org-time-stamp-inactive
   "dd"         #'org-deadline
   "ds"         #'org-schedule
   "dt"         #'org-time-stamp
+  "C"          #'(:ignore t :which-key "clock")
   "Cp"         #'org-pomodoro
   "Ci"         #'org-clock-in
   "Co"         #'org-clock-out
@@ -182,6 +196,7 @@
   "CR"         #'org-clock-report
   "Cc"         #'org-clock-cancel
   "Cd"         #'org-clock-display
+  "p"          #'(:ignore t :which-key "presentation")
   "p'"         #'org-tree-slide-mode
   "ps"         #'org-tree-slide-skip-done-toggle
   )
@@ -420,6 +435,7 @@
  "q"          #'(:ignore t :which-key "quit")
  "qq"         #'save-buffers-kill-terminal
  "qe"         #'server-edit
+ "qf"         #'delete-frame
 
  ;; Search
  "s"          #'(:ignore t :which-key "search/yas")
@@ -470,6 +486,15 @@
 
  ;; Text
  "x"         #'(:ignore t :which-key "text")
+ "xi"        #'(:ignore t :which-key "string-inflection")
+ "xi-"       #'string-inflection-kebab-case
+ "xiC"       #'string-inflection-camelcase
+ "xiU"       #'string-inflection-upcase
+ "xi_"       #'string-inflection-underscore
+ "xic"       #'string-inflection-lower-camelcase
+ "xik"       #'string-inflection-kebab-case
+ "xiu"       #'string-inflection-underscore
+ "xf"        #'(:ignore t :which-key "format")
  "xfg"       #'copy-as-format-github
  "xfh"       #'copy-as-format-html
  "xfm"       #'copy-as-format-markdown
@@ -478,6 +503,16 @@
  "xgt"       #'google-translate-at-point
  "xwd"       #'osx-dictionary-search-word-at-point
  "xs"        #'read-aloud-this
+
+ ;; Frame
+ "F"         #'(:ignore t :which-key "frame")
+ "Fb"        #'switch-to-buffer-other-frame
+ "Fd"        #'delete-frrame
+ "FD"        #'delete-other-frrame
+ "FO"        #'dired-other-frame
+ "Fo"        #'other-frame
+ "Fn"        #'make-frame
+ "Ff"        #'find-file-other-frame
 
  ;; Others
  "as"        #'(:ignore t :which-key "shell/term")
