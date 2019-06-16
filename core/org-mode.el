@@ -330,8 +330,8 @@
   (setq org-drill-maximum-duration 30)   ; 30 minutes
   (setq org-drill-learn-fraction 0.1)
   (setq org-drill-spaced-repetition-algorithm 'sm2)
-  ;; (setq org-plantuml-jar-path "~/org-modes/plantuml.jar")
-  (setq org-plantuml-jar-path "~/org-modes/plantuml.beta.jar")
+  (setq org-plantuml-jar-path plantuml-jar-path)
+  ;; (setq org-plantuml-jar-path "~/org-modes/plantuml.beta.jar")
 
   ;; customize
   ;; (defun jws/org-protocol-capture-p ()
@@ -502,7 +502,12 @@ This function is heavily adapted from `org-between-regexps-p'."
 
 (defun git-branch-by-title (title link)
   "Auto generate git branch by title"
-  (message "ft/%s--%s" (s-dashed-words title) (car (last (s-split "/" link)))))
+  (let* ((dashed-title (s-dashed-words title))
+	 (card-id (car (last (s-split "/" link)))))
+    (message "%s/%s--%s"
+	     (if (s-contains? "refactor" dashed-title) "chore" "ft")
+	     dashed-title
+	     card-id)))
 
 (defhydra hydra-org-babel
   (:color pink :hint nil)
