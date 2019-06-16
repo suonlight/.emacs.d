@@ -2,6 +2,11 @@
 (use-package general)
 
 (general-define-key
+ :states '(normal visual emacs)
+ :keymaps 'flycheck-error-list-mode-map
+ "q" #'quit-window)
+
+(general-define-key
  :keymaps 'inf-ruby-mode-map
  :states '(normal visual)
  "o"       #'evil-insert-resume
@@ -205,12 +210,14 @@
   "eb" #'eval-buffer
   "ee" #'eval-expression)
 (leader-define-key ruby-mode-map
-  "r"  #'(:ignore t :which-key "refactor")
-  "x"  #'(:ignore t :which-key "text")
-  "rt" #'sl/ruby-copy-generated-spec-at-point
-  "'" #'inf-ruby-console-auto
-  "x{" #'ruby-toggle-block
-  "x'" #'ruby-toggle-string-quotes)
+  "'"    #'inf-ruby-console-auto
+  "d"    #'(:ignore t :which-key "debugger")
+  "d'"   #'dap-mode
+  "r"    #'(:ignore t :which-key "refactor")
+  "rt"   #'sl/ruby-copy-generated-spec-at-point
+  "x"    #'(:ignore t :which-key "text")
+  "x{"   #'ruby-toggle-block
+  "x'"   #'ruby-toggle-string-quotes)
 (leader-define-key term-mode-map
   "n" #'multi-term-next
   "p" #'multi-term-prev
@@ -228,6 +235,8 @@
 
 ;; (leader-define-key js2-mode-map
 (leader-define-key js-mode-map
+  "d"  #'(:ignore t :which-key "debugger")
+  "d'" #'dap-mode
   "gG" #'dumb-jump-go-other-window
   "gg" #'dumb-jump-go
   "gb" #'dumb-jump-back
