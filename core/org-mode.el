@@ -505,7 +505,9 @@ This function is heavily adapted from `org-between-regexps-p'."
   (let* ((dashed-title (s-dashed-words title))
 	 (card-id (car (last (s-split "/" link)))))
     (message "%s/%s--%s"
-	     (if (s-contains? "refactor" dashed-title) "chore" "ft")
+	     (if (or (s-contains? "refactor" dashed-title)
+		     (s-contains? "chore" dashed-title))
+		 "chore" "ft")
 	     dashed-title
 	     card-id)))
 
