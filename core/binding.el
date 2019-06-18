@@ -257,16 +257,16 @@
  "C-TAB"       #'yas-expand
  "s-s"         #'save-buffer
  "s-w"         #'kill-this-buffer
- "s-0"         #'awesome-tab-switch-group-to-0
- "s-1"         #'awesome-tab-switch-group-to-1
- "s-2"         #'awesome-tab-switch-group-to-2
- "s-3"         #'awesome-tab-switch-group-to-3
- "s-4"         #'awesome-tab-switch-group-to-4
- "s-5"         #'awesome-tab-switch-group-to-5
- "s-6"         #'awesome-tab-switch-group-to-6
- "s-7"         #'awesome-tab-switch-group-to-7
- "s-8"         #'awesome-tab-switch-group-to-8
- "s-9"         #'awesome-tab-switch-group-to-9)
+ "s-0"         #'persp-switch-to-0
+ "s-1"         #'persp-switch-to-1
+ "s-2"         #'persp-switch-to-2
+ "s-3"         #'persp-switch-to-3
+ "s-4"         #'persp-switch-to-4
+ "s-5"         #'persp-switch-to-5
+ "s-6"         #'persp-switch-to-6
+ "s-7"         #'persp-switch-to-7
+ "s-8"         #'persp-switch-to-8
+ "s-9"         #'persp-switch-to-9)
 
 (general-define-key
  :states '(normal visual insert emacs)
