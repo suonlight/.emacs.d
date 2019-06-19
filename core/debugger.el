@@ -91,8 +91,7 @@
 
 
   (defun dap-ruby-run-test-at-point ()
-    "Run JUnit test.
-					If there is no method under cursor it will fallback to test class."
+    "Run Ruby test at point"
     (interactive)
     (let ((debug-args (list :type "Ruby"
 			    :request "launch"
@@ -106,8 +105,7 @@
 				    (funcall debug-args)))))
 
   (defun dap-ruby-run-test ()
-    "Run JUnit test.
-					If there is no method under cursor it will fallback to test class."
+    "Run Ruby test file"
     (interactive)
     (let ((debug-args (list :type "Ruby"
 			    :request "launch"
@@ -122,6 +120,12 @@
   (setq dap-ruby-debug-program `("node" ,(expand-file-name "~/.suon-emacs/ruby/rebornix.Ruby-0.22.3/extension/out/debugger/main.js")))
   (dap-register-debug-provider "Ruby" 'dap-ruby--populate-start-file-args)
 
+  (defun dap-ruby-smart-run ()
+    "Run Ruby test at point or Rackup"
+    (interactive)
+    (if (ruby-test-implementation-p)
+	(dap-ruby-run-rackup)
+      (dap-ruby-run-test-at-point)))
 
   (defun dap-node-run-test ()
     "Run JUnit test.
@@ -206,8 +210,8 @@
 
   (general-define-key
    :states '(normal visual emacs)
-   :keymaps 'ruby-test-mode-map
-   "<f5>"       #'dap-ruby-run-test-at-point)
+   :keymaps 'ruby-mode-map
+   "<f5>"       #'dap-ruby-smart-run)
 
   (leader-define-key ruby-mode-map
     "d"    #'(:ignore t :which-key "debugger")
