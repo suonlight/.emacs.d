@@ -474,6 +474,7 @@
  "aos"       #'org-search-view
  "aot"       #'org-todo-list
  "ap"        #'list-processes-other-window
+ "ac"        #'calendar
 
  ;; Themes
  "T"         #'(:ignore t :which-key "themes")
