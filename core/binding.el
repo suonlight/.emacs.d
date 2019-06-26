@@ -247,7 +247,7 @@
   "If" #'import-js-fix)
 
 (general-define-key
- :states '(normal visual insert emacs)
+ :states '(normal visual insert emacs motion)
  "C-h"         #'evil-window-left
  "C-j"         #'evil-window-down
  "C-k"         #'evil-window-up
@@ -269,7 +269,7 @@
  "s-9"         #'persp-switch-to-9)
 
 (general-define-key
- :states '(normal visual insert emacs)
+ :states '(normal visual)
  :prefix "SPC"
  :non-normal-prefix "M-SPC"
  "?"   #'counsel-descbinds
