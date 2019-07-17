@@ -17,7 +17,7 @@
   (message "Rebuild ivy-re-builders-alist")
   (setq ivy-re-builders-alist '((ivy-switch-buffer . ivy--regex-fuzzy)
 				(swiper . ivy--regex-plus)
-				(counsel-projectile-find-file . ivy--regex-fuzzy)
+				;; (counsel-projectile-find-file . ivy--regex-fuzzy)
 				(t . ivy--regex-plus)))
 
   (defun counsel-insert-models ()

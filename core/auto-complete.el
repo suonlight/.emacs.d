@@ -3,7 +3,7 @@
   :init
   (setq company-minimum-prefix-length 3)
   (setq company-auto-complete nil)
-  (setq company-idle-delay 0.5)
+  (setq company-idle-delay 0.3)
   (setq company-require-match 'never)
   (setq company-frontends
 	'(company-pseudo-tooltip-unless-just-one-frontend
