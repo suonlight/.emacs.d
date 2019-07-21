@@ -271,7 +271,7 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
 
 (defun open-config-file ()
   (interactive)
-  (find-file "~/.suon-emacs-v2/init.el"))
+  (find-file "~/.emacs.d/init.el"))
 
 (defun open-scratch-buffer ()
   (interactive)
@@ -282,13 +282,13 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
   (list-processes)
   (switch-to-buffer-other-window "*Process List*"))
 
-(defun prodigy-awesome-tab-group ()
+(defun prodigy-centaur-tabs-group ()
   "Jump to project by awesome tab group"
   (interactive)
   (-when-let (service (prodigy-service-at-pos))
     (let* ((project-name (f-expand (prodigy-service-cwd service)))
 	   (group-to-switch (format "Project: %s/" project-name))
-	   (result (awesome-tab-switch-group group-to-switch)))
+	   (result (centaur-tabs-switch-group group-to-switch)))
       (when (listp result) (counsel-projectile-find-file)))))
 
 (defun copy-this-file ()
@@ -309,7 +309,7 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
     (delete-other-windows)
     (split-window-right)
     (select-window (next-window))
-    (awesome-tab-backward-tab)
+    (centaur-tabs-backward-tab)
     (select-window w)))
 
 (defun split-window-vertically-3 ()
@@ -319,10 +319,10 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
     (delete-other-windows)
     (split-window-right)
     (select-window (next-window))
-    (awesome-tab-backward-tab)
+    (centaur-tabs-backward-tab)
     (split-window-right)
     (select-window (next-window))
-    (awesome-tab-backward-tab)
+    (centaur-tabs-backward-tab)
     (balance-windows-area)
     (select-window w)))
 

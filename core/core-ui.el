@@ -17,7 +17,12 @@
   (doom-modeline-mode))
 
 (use-package all-the-icons
-  :defer 2)
+  :defer 2
+  :config
+  (add-to-list 'all-the-icons-mode-icon-alist
+	       '(inf-ruby-mode all-the-icons-octicon "ruby" :face all-the-icons-lred))
+  (add-to-list 'all-the-icons-mode-icon-alist
+                 '(ruby-mode all-the-icons-octicon "ruby" :face all-the-icons-lred)))
 
 (use-package font-lock+
   :straight

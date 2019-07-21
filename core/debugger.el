@@ -117,7 +117,7 @@
 				    (gethash dap--debug-providers)
 				    (funcall debug-args)))))
 
-  (setq dap-ruby-debug-program `("node" ,(expand-file-name "~/.suon-emacs/ruby/rebornix.Ruby-0.22.3/extension/out/debugger/main.js")))
+  (setq dap-ruby-debug-program `("node" ,(expand-file-name "~/.emacs.d/ruby/rebornix.Ruby-0.22.3/extension/out/debugger/main.js")))
   (dap-register-debug-provider "Ruby" 'dap-ruby--populate-start-file-args)
 
   (defun dap-ruby-smart-run ()

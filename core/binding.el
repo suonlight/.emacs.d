@@ -42,16 +42,15 @@
 (general-define-key
  :keymaps 'global-map
  :states '(normal visual insert emacs)
- "s-k"         #'awesome-tab-forward-tab
- "s-j"         #'awesome-tab-backward-tab
- "s-}"         #'awesome-tab-forward-tab
- "s-{"         #'awesome-tab-backward-tab
- "s-]"         #'awesome-tab-forward-group
- "s-["         #'awesome-tab-backward-group
+ "s-k"         #'centaur-tabs-forward-tab
+ "s-j"         #'centaur-tabs-backward-tab
+ "s-}"         #'centaur-tabs-forward-tab
+ "s-{"         #'centaur-tabs-backward-tab
+ "s-]"         #'centaur-tabs-forward-group
+ "s-["         #'centaur-tabs-backward-group
  "s-b"         #'ivy-switch-buffer
  "s-`"         #'multi-libvterm-projectile
  "<f10>"       #'toggle-maximize-buffer
- ;; "<f11>"       #'(sl/awesome-tab-group-hydra/body :which-key "layouts")
  "<f11>"       #'(sl/persp-hydra/body :which-key "layouts")
  "<f12>"       #'prodigy-as-default-layout
  "s-<f12>"     #'list-processes-other-window)
@@ -323,7 +322,6 @@
 
  ;; Layout
  "l"          #'(sl/persp-hydra/body :which-key "layouts")
- ;; "l"          #'(sl/awesome-tab-group-hydra/body :which-key "layouts")
  ;; Files
  "f"          #'(:ignore t :which-key "files")
  "fyC"        #'projectile-copy-file-path-with-line-column
@@ -359,13 +357,13 @@
  "bm"         #'view-echo-area-messages
  ;; "bn"         #'next-buffer
  ;; "bp"         #'previous-buffer
- "b0"         #'awesome-tab-select-beg-tab
- "b$"         #'awesome-tab-select-end-tab
- "bn"         #'awesome-tab-forward-tab
- "bp"         #'awesome-tab-backward-tab
- "bj"         #'awesome-tab-select-visible-tab
- "b<"         #'awesome-tab-move-current-tab-to-left
- "b>"         #'awesome-tab-move-current-tab-to-right
+ "b0"         #'centaur-tabs-select-beg-tab
+ "b$"         #'centaur-tabs-select-end-tab
+ "bn"         #'centaur-tabs-forward-tab
+ "bp"         #'centaur-tabs-backward-tab
+ "bj"         #'centaur-tabs-select-visible-tab
+ "b<"         #'centaur-tabs-move-current-tab-to-left
+ "b>"         #'centaur-tabs-move-current-tab-to-right
  "bw"         #'read-only-mode
  "bd"         #'kill-this-buffer
  "bs"         #'open-scratch-buffer
@@ -475,6 +473,7 @@
  "aot"       #'org-todo-list
  "ap"        #'list-processes-other-window
  "ac"        #'calendar
+ "ad"        #'projectile-dired
 
  ;; Themes
  "T"         #'(:ignore t :which-key "themes")
