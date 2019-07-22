@@ -48,7 +48,7 @@
  "s-{"         #'centaur-tabs-backward-tab
  "s-]"         #'centaur-tabs-forward-group
  "s-["         #'centaur-tabs-backward-group
- "s-b"         #'ivy-switch-buffer
+ "s-b"         #'counsel-projectile-switch-to-buffer
  "s-`"         #'multi-libvterm-projectile
  "<f10>"       #'toggle-maximize-buffer
  "<f11>"       #'(sl/persp-hydra/body :which-key "layouts")
