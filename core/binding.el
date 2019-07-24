@@ -442,6 +442,7 @@
  "q"          #'(:ignore t :which-key "quit")
  "qq"         #'save-buffers-kill-terminal
  "qe"         #'server-edit
+ "qs"         #'save-buffers-kill-emacs
  "qf"         #'delete-frame
 
  ;; Search
