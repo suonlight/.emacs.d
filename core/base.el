@@ -1,6 +1,12 @@
 ;;; -*- lexical-binding: t; -*-
 ;; (setq inhibit-startup-screen t)
 ;; (setq initial-scratch-message ";; Happy Hacking")
+
+;; emacs 27
+;; (set-frame-font "-ADBE-Source Code Pro-normal-normal-normal-*-13-*-*-*-m-0-iso10646-1")
+(set-face-font 'default "-ADBE-Source Code Pro-normal-normal-normal-*-13-*-*-*-m-0-iso10646-1")
+(setq default-frame-alist '((font ."-ADBE-Source Code Pro-normal-normal-normal-*-13-*-*-*-m-0-iso10646-1"))) ;;; set default font for emacs --daemon / emacsclient
+
 (scroll-bar-mode -1)
 (tool-bar-mode   -1)
 (tooltip-mode    -1)
