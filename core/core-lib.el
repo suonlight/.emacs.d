@@ -330,3 +330,8 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
   (interactive)
   (sl/layout-switch-by-pos 0)
   (prodigy))
+
+(defun evil-multi-libvterm-projectile ()
+  (interactive)
+  (multi-libvterm-projectile)
+  (evil-insert-state))

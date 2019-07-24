@@ -49,7 +49,7 @@
  "s-]"         #'centaur-tabs-forward-group
  "s-["         #'centaur-tabs-backward-group
  "s-b"         #'counsel-projectile-switch-to-buffer
- "s-`"         #'multi-libvterm-projectile
+ "s-`"         #'evil-multi-libvterm-projectile
  "<f10>"       #'toggle-maximize-buffer
  "<f11>"       #'(sl/persp-hydra/body :which-key "layouts")
  "<f12>"       #'prodigy-as-default-layout
@@ -291,7 +291,7 @@
  "p"          #'(:ignore t :which-key "projects")
  "pSPC"       #'counsel-projectile
  ;; jp'"         #'toggle-shell
- "p'"         #'multi-libvterm-projectile
+ "p'"         #'evil-multi-libvterm-projectile
  "p!"         #'projectile-run-shell-command-in-root
  "p%"         #'projectile-replace-regexp
  "p&"         #'projectile-run-async-shell-command-in-root
