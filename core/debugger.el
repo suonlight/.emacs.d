@@ -2,16 +2,24 @@
   :commands (dap-ruby-run-test-at-point dap-ruby-run-rackup dap-mode)
   :config
   (dap-ui-mode)
+
   (defun rbenv-ruby-version ()
     (let ((version-file-path (or (rbenv--locate-file ".ruby-version")
 				 (rbenv--locate-file ".rbenv-version"))))
-      (-> version-file-path
-	  f-read
-	  s-trim)))
+      (s-replace "ruby-" ""
+		 (-> version-file-path
+		     f-read
+		     s-trim))))
 
   (defun rbenv-path-for (program)
     (expand-file-name
      (format "~/.rbenv/versions/%s/bin/%s" (rbenv-ruby-version) program)))
+
+  (defun rbenv-rspec-program ()
+    (if (f-exists? (f-join (projectile-project-root) "bin/rspec"))
+	"bin/rspec"
+      (expand-file-name
+       (format "~/.rbenv/versions/%s/bin/rspec" (rbenv-ruby-version)))))
 
   (defun rbenv-rackup-path ()
     (expand-file-name
@@ -95,8 +103,7 @@
     (interactive)
     (let ((debug-args (list :type "Ruby"
 			    :request "launch"
-			    ;; :program "bin/rspec"
-			    :program (rbenv-path-for "rspec")
+			    :program (rbenv-rspec-program)
 			    :args `(,(copy-file-path-with-line))
 			    :environment-variables '(("DISABLE_SPRING" . "true"))
 			    :name "Rspec File At Point")))
@@ -117,7 +124,7 @@
 				    (gethash dap--debug-providers)
 				    (funcall debug-args)))))
 
-  (setq dap-ruby-debug-program `("node" ,(expand-file-name "~/.emacs.d/ruby/rebornix.Ruby-0.22.3/extension/out/debugger/main.js")))
+  (setq dap-ruby-debug-program `("node" ,(expand-file-name "~/.emacs.d/.extension/vscode/rebornix.Ruby/extension/out/debugger/main.js")))
   (dap-register-debug-provider "Ruby" 'dap-ruby--populate-start-file-args)
 
   (defun dap-ruby-smart-run ()
