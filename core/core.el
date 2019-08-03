@@ -102,6 +102,10 @@
 
 (use-package request)
 
+(use-package winum
+  :config
+  (winum-mode))
+
 (load (concat user-emacs-directory "core/binding"))
 (load (concat user-emacs-directory "core/core-lib"))
 (load (concat user-emacs-directory "core/core-projects"))
