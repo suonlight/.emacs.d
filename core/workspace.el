@@ -40,6 +40,7 @@
        (string-prefix-p "*magithub" name)
        (string-prefix-p "*git-messenger" name)
        (string= "*osx-dictonary*" name)
+       (string= "*Ibuffer*" name)
        (string= "*Google Translate*" name)
        (string= "*Flycheck errors*" name)
        (string= "*Flycheck error messages*" name)
