@@ -41,22 +41,6 @@
 
 (general-define-key
  :keymaps 'global-map
- :states '(normal visual insert emacs)
- "s-k"         #'centaur-tabs-forward-tab
- "s-j"         #'centaur-tabs-backward-tab
- "s-}"         #'centaur-tabs-forward-tab
- "s-{"         #'centaur-tabs-backward-tab
- "s-]"         #'centaur-tabs-forward-group
- "s-["         #'centaur-tabs-backward-group
- "s-b"         #'counsel-projectile-switch-to-buffer
- "s-`"         #'evil-multi-libvterm-projectile
- "<f10>"       #'toggle-maximize-buffer
- "<f11>"       #'(sl/persp-hydra/body :which-key "layouts")
- "<f12>"       #'prodigy-as-default-layout
- "s-<f12>"     #'list-processes-other-window)
-
-(general-define-key
- :keymaps 'global-map
  :states '(normal visual)
  "C-p"         #'counsel-projectile-find-file)
 
@@ -244,6 +228,23 @@
   "I'" #'run-import-js
   "Ii" #'import-js-import
   "If" #'import-js-fix)
+
+(general-define-key
+ :keymaps 'global-map
+ :states '(normal visual insert emacs)
+ "s-k"         #'centaur-tabs-forward-tab
+ "s-j"         #'centaur-tabs-backward-tab
+ "s-}"         #'persp-next
+ "s-{"         #'persp-prev
+ "s-]"         #'persp-next
+ "s-["         #'persp-prev
+ "s-b"         #'counsel-projectile-switch-to-buffer
+ "s-`"         #'evil-multi-libvterm-projectile
+ "s-<S-w>"     #'evil-window-delete
+ "<f10>"       #'toggle-maximize-buffer
+ "<f11>"       #'(sl/persp-hydra/body :which-key "layouts")
+ "<f12>"       #'prodigy-as-default-layout
+ "s-<f12>"     #'list-processes-other-window)
 
 (general-define-key
  :states '(normal visual insert emacs motion)
