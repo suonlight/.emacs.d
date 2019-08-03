@@ -352,6 +352,7 @@
 
  ;; Buffers
  "b"          #'(:ignore t :which-key "buffers")
+ "b."         #'hy
  "bi"         #'ibuffer
  "bb"         #'ivy-switch-buffer
  ;; "bb"         #'sl/switch-buffer

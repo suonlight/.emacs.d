@@ -169,6 +169,19 @@
 
 (use-package ivy-hydra :after ivy)
 
+(defhydra hydra-buffer (:hint nil :color pink)
+  ("0" centaur-tabs-select-beg-tab "Begin tab" :column "Navigation")
+  ("$" centaur-tabs-select-end-tab "End tab" )
+  ("n" centaur-tabs-forward-tab "Next tab")
+  ("p" centaur-tabs-backward-tab "Prev tab")
+  ("d" kill-this-buffer "Kill tab" :column "Actions" :exit t)
+  (">" centaur-tabs-move-current-tab-to-right "Move right")
+  ("<" centaur-tabs-move-current-tab-to-left "Move left")
+  ("i" ibuffer "Ibuffer" :exit t :column "Open")
+  ("m" view-echo-area-messages "Message" :exit t)
+  ("b" ivy-switch-buffer "Switch buffer" :exit t)
+  ("q" nil "Cancel" :color blue :column nil))
+
 (use-package counsel-projectile
   :after projectile
   :defer 1
