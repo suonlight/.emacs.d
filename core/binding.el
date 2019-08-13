@@ -362,7 +362,7 @@
 
  ;; Buffers
  "b"          #'(:ignore t :which-key "buffers")
- "b."         #'hy
+ "b."         #'hydra-buffer/body
  "bi"         #'ibuffer
  "bb"         #'ivy-switch-buffer
  ;; "bb"         #'sl/switch-buffer
@@ -398,6 +398,7 @@
  "w2"         #'split-window-vertically-2
  "w3"         #'split-window-vertically-3
  "wc"         #'evil-window-delete
+ "<backspace>"         #'evil-window-delete
  "wC"         #'centered-window-mode
  "wf"         #'follow-mode
  "wh"         #'evil-window-left
