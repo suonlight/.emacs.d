@@ -6,7 +6,7 @@
 
 (use-package vterm
   :commands (multi-libvterm multi-libvterm-next multi-libvterm-prev multi-libvterm-dedicated-toggle multi-libvterm-projectile toggle-tmux)
-  :straight (vterm :type git :host github :repo "jixiuf/emacs-libvterm")
+  ;; :straight (vterm :type git :host github :repo "jixiuf/emacs-libvterm")
   :config
   (defun toggle-tmux ()
     (interactive)
