@@ -140,7 +140,7 @@
 ** read-aloud
    #+BEGIN_SRC emacs-lisp
      (use-package read-aloud
-       :commands (read-aloud-this read-aloud-buf)
+       :commands (read-aloud-this read-aloud-buf read-aloud--string)
        :config (setq read-aloud-engine "say"))
 
    #+END_SRC
