@@ -1,89 +1,56 @@
 ;;; -*- lexical-binding: t; -*-
 
+(defun org-drill-sound ()
+  (interactive)
+  (if-let ((drill-sound (org-entry-get (point) "DRILL_SOUND")))
+      (start-process-shell-command "mplayer" "*sound*" (format "mplayer %s" (expand-file-name drill-sound)))
+    (read-aloud--string (org-get-heading t t t t) "word")))
+
 (defvar org-drill-p nil)
 (defun org-drill-wrapper ()
   (interactive)
   (unless org-drill-p
     (use-package org-drill
       :after org
-      :straight nil
+      :straight (org-drill :type git :host gitlab :repo "phillord/org-drill")
       :defer 1
       :commands org-drill
       :config
       (message "Loading org-drill...")
-      (defun org-drill-sound ()
-	(interactive)
-	(if-let ((drill-sound (org-entry-get (point) "DRILL_SOUND")))
-	    (start-process-shell-command "mplayer" "*sound*" (format "mplayer %s" (expand-file-name drill-sound)))
-	  (read-aloud--string (org-get-heading t t t t) "word")))
+
       (defvar org-drill--repeat-key ?r "")
-      (defun org-drill-presentation-prompt (&rest fmt-and-args)
+      (defun org-drill-presentation-prompt-in-mini-buffer (session &optional prompt)
+	"Create a card prompt with a timer and user-specified    if returns
+    (or (cdr (assoc ch returns)))
+ menu.
+
+Arguments:
+
+PROMPT: A string that overrides the standard prompt.
+"
 	(let* ((item-start-time (current-time))
 	       (input nil)
 	       (ch nil)
-	       (last-second 0)
-	       (mature-entry-count (+ (length *org-drill-young-mature-entries*)
-				      (length *org-drill-old-mature-entries*)
-				      (length *org-drill-overdue-entries*)))
-	       (status (first (org-drill-entry-status)))
 	       (prompt
-		(if fmt-and-args
-		    (apply 'format
-			   (first fmt-and-args)
-			   (rest fmt-and-args))
-		  (format (concat "Press key for answer, "
-				  "%c=edit, %c=tags, %c=skip, %c=repeat, %c=quit.")
-			  org-drill--edit-key
-			  org-drill--tags-key
-			  org-drill--skip-key
-			  org-drill--repeat-key
-			  org-drill--quit-key))))
-	  (setq prompt
-		(format "%s %s %s %s %s %s"
-			(propertize
-			 (char-to-string
-			  (cond
-			   ((eql status :failed) ?F)
-			   (*org-drill-cram-mode* ?C)
-			   (t
-			    (case status
-			      (:new ?N) (:young ?Y) (:old ?o) (:overdue ?!)
-			      (t ??)))))
-			 'face `(:foreground
-				 ,(case status
-				    (:new org-drill-new-count-color)
-				    ((:young :old) org-drill-mature-count-color)
-				    ((:overdue :failed) org-drill-failed-count-color)
-				    (t org-drill-done-count-color))))
-			(propertize
-			 (number-to-string (length *org-drill-done-entries*))
-			 'face `(:foreground ,org-drill-done-count-color)
-			 'help-echo "The number of items you have reviewed this session.")
-			(propertize
-			 (number-to-string (+ (length *org-drill-again-entries*)
-					      (length *org-drill-failed-entries*)))
-			 'face `(:foreground ,org-drill-failed-count-color)
-			 'help-echo (concat "The number of items that you failed, "
-					    "and need to review again."))
-			(propertize
-			 (number-to-string mature-entry-count)
-			 'face `(:foreground ,org-drill-mature-count-color)
-			 'help-echo "The number of old items due for review.")
-			(propertize
-			 (number-to-string (length *org-drill-new-entries*))
-			 'face `(:foreground ,org-drill-new-count-color)
-			 'help-echo (concat "The number of new items that you "
-					    "have never reviewed."))
-			prompt))
+		(or prompt
+		    (format (concat "Press key for answer, "
+				    "%c=edit, %c=tags, %c=skip, %c=repeat, %c=quit.")
+			    org-drill--edit-key
+			    org-drill--tags-key
+			    org-drill--skip-key
+			    org-drill--repeat-key
+			    org-drill--quit-key)))
+	       (full-prompt
+		(org-drill--make-minibuffer-prompt session prompt)))
 	  (org-drill-sound)
 	  (if (and (eql 'warn org-drill-leech-method)
 		   (org-drill-entry-leech-p))
-	      (setq prompt (concat
-			    (propertize "!!! LEECH ITEM !!!
-									    You seem to be having a lot of trouble memorising this item.
-									    Consider reformulating the item to make it easier to remember.\n"
-					'face '(:foreground "red"))
-			    prompt)))
+	      (setq full-prompt (concat
+				 (propertize "!!! LEECH ITEM !!!
+You seem to be having a lot of trouble memorising this item.
+Consider reformulating the item to make it easier to remember.\n"
+					     'face '(:foreground "red"))
+				 full-prompt)))
 	  (while (memq ch '(nil org-drill--tags-key))
 	    (setq ch nil)
 	    (while (not (input-pending-p))
@@ -91,23 +58,26 @@
 		(message (concat (if (>= (time-to-seconds elapsed) (* 60 60))
 				     "++:++ "
 				   (format-time-string "%M:%S " elapsed))
-				 prompt))
+				 full-prompt))
 		(sit-for 1)))
-	    (setq input (read-key-sequence nil))
+	    (setq input (org-drill--read-key-sequence nil))
 	    (if (stringp input) (setq ch (elt input 0)))
 	    (if (eql ch org-drill--tags-key)
 		(org-set-tags-command)))
-	  (case ch
-	    (org-drill--quit-key nil)
-	    (org-drill--edit-key 'edit)
-	    (org-drill--skip-key 'skip)
-	    (org-drill--repeat-key 'sound)
-	    (otherwise t))))
-      (defun org-drill-reschedule ()
+	  (cond
+	   ((eql ch org-drill--quit-key) nil)
+	   ((eql ch org-drill--edit-key) 'edit)
+	   ((eql ch org-drill--skip-key) 'skip)
+	   (t t))))
+      (defun org-drill-reschedule (session)
 	"Returns quality rating (0-5), or nil if the user quit."
 	(let ((ch nil)
 	      (input nil)
 	      (next-review-dates (org-drill-hypothetical-next-review-dates))
+	      (typed-answer-statement (if (oref session typed-answer)
+					  (format "Your answer: %s\n"
+						  (oref session typed-answer))
+					""))
 	      (key-prompt (format "(0-5, %c=help, %c=edit, %c=tags, %c=repeat, %c=quit)"
 				  org-drill--help-key
 				  org-drill--edit-key
@@ -119,29 +89,32 @@
 				       org-drill--edit-key
 				       7          ; C-g
 				       ?0 ?1 ?2 ?3 ?4 ?5)))
-	      (setq input (read-key-sequence
+	      (run-hooks 'org-drill-display-answer-hook)
+	      (setq input (org-drill--read-key-sequence
 			   (if (eq ch org-drill--help-key)
 			       (format "0-2 Means you have forgotten the item.
-										    3-5 Means you have remembered the item.
+3-5 Means you have remembered the item.
 
-										    0 - Completely forgot.
-										    1 - Even after seeing the answer, it still took a bit to sink in.
-										    2 - After seeing the answer, you remembered it.
-										    3 - It took you awhile, but you finally remembered. (+%s days)
-										    4 - After a little bit of thought you remembered. (+%s days)
-										    5 - You remembered the item really easily. (+%s days)
+0 - Completely forgot.
+1 - Even after seeing the answer, it still took a bit to sink in.
+2 - After seeing the answer, you remembered it.
+3 - It took you awhile, but you finally remembered. (+%s days)
+4 - After a little bit of thought you remembered. (+%s days)
+5 - You remembered the item really easily. (+%s days)
 
-										    How well did you do? %s"
+%sHow well did you do? %s"
 				       (round (nth 3 next-review-dates))
 				       (round (nth 4 next-review-dates))
 				       (round (nth 5 next-review-dates))
+				       typed-answer-statement
 				       key-prompt)
-			     (format "How well did you do? %s" key-prompt))))
+			     (format "%sHow well did you do? %s"
+				     typed-answer-statement key-prompt))))
 	      (cond
 	       ((stringp input)
 		(setq ch (elt input 0)))
 	       ((and (vectorp input) (symbolp (elt input 0)))
-		(case (elt input 0)
+		(cl-case (elt input 0)
 		  (up (ignore-errors (forward-line -1)))
 		  (down (ignore-errors (forward-line 1)))
 		  (left (ignore-errors (backward-char)))
@@ -150,24 +123,23 @@
 		  (next (ignore-errors (scroll-up)))))  ; pgdn
 	       ((and (vectorp input) (listp (elt input 0))
 		     (eventp (elt input 0)))
-		(case (car (elt input 0))
+		(cl-case (car (elt input 0))
 		  (wheel-up (ignore-errors (mwheel-scroll (elt input 0))))
 		  (wheel-down (ignore-errors (mwheel-scroll (elt input 0)))))))
 	      (if (eql ch org-drill--tags-key)
 		  (org-set-tags-command))
 	      (if (eql ch org-drill--repeat-key)
-		  (org-drill-sound))
-	      ))
+		  (org-drill-sound))))
 	  (cond
 	   ((and (>= ch ?0) (<= ch ?5))
 	    (let ((quality (- ch ?0))
 		  (failures (org-drill-entry-failure-count)))
-	      (unless *org-drill-cram-mode*
+	      (unless (oref session cram-mode)
 		(save-excursion
-		  (let ((quality (if (org-drill--entry-lapsed-p) 2 quality)))
+		  (let ((quality (if (org-drill--entry-lapsed-p session) 2 quality)))
 		    (org-drill-smart-reschedule quality
 						(nth quality next-review-dates))))
-		(push quality *org-drill-session-qualities*)
+		(push quality (oref session qualities))
 		(cond
 		 ((<= quality org-drill-failure-quality)
 		  (when org-drill-leech-failure-threshold
@@ -185,20 +157,19 @@
 		      (sit-for 0.5)))))
 		(org-set-property "DRILL_LAST_QUALITY" (format "%d" quality))
 		(org-set-property "DRILL_LAST_REVIEWED"
-				  (time-to-inactive-org-timestamp (current-time))))
+				  (org-drill-time-to-inactive-org-timestamp (current-time))))
 	      quality))
 	   ((= ch org-drill--edit-key)
 	    'edit)
-	   (t
-	    nil))))
+	   (t nil))))
       )
     (setq org-drill-p t))
   (org-drill))
 
 (use-package org
   ;; :defer 10
-  :straight (org :type git :host github :repo "emacsmirror/org")
-  ;; :straight org-plus-contrib
+  ;; :straight (org :type git :host github :repo "emacsmirror/org")
+  :straight org-plus-contrib
   :mode (("\\.org$" . org-mode))
   :init
   (setq org-imenu-depth 3)
@@ -206,6 +177,19 @@
   (setq org-log-done 'time)
   (defvar org-babel-do-load-languages-p nil)
   :config
+  ;; (require 'org-notify)
+  ;; (org-notify-start)
+
+  ;; ;; Example setup:
+  ;; ;;
+  ;; (org-notify-add 'appt
+  ;; 		  '(:time "-1s" :period "20s" :duration 10
+  ;; 			  :actions (-message -ding))
+  ;; 		  '(:time "15m" :period "2m" :duration 100
+  ;; 			  :actions -notify)
+  ;; 		  '(:time "2h" :period "5m" :actions -message)
+  ;; 		  '(:time "3d" :actions -email))
+
   ;; (defalias 'origin-org-babel-execute-src-block 'org-babel-execute-src-block)
   (defun sl/org-babel-execute-src-block (&optional orig-fun arg info params)
     (interactive "P")
@@ -251,20 +235,6 @@
     (funcall orig-fun arg info params))
 
   (advice-add 'org-babel-execute-src-block :around 'sl/org-babel-execute-src-block)
-  ;; (org-babel-do-load-languages
-  ;;  'org-babel-load-languages
-  ;;  '((emacs-lisp . t)
-  ;;    (dot . t)
-  ;;    (sql . t)
-  ;;    (ruby . t)
-  ;;    (R . t)
-  ;;    (org . t)
-  ;;    (screen . t)
-  ;;    (shell . t)
-  ;;    (rust . t)
-  ;;    (plantuml . t)
-  ;;    (C . t)
-  ;;    (js . t)))
 
   (setq org-capture-templates
 	'(
@@ -308,7 +278,7 @@
 	   (file "~/org-modes/notes.org")
 	   "* %:description\n\nSource: %:link\nCaptured On:%U\n\n%:initial\n\n"
 	   :immediate-finish
-           :prepend)
+	   :prepend)
 	  ("z"
 	   "Capture Notes"
 	   entry
@@ -330,30 +300,20 @@
   (setq org-drill-maximum-duration 30)   ; 30 minutes
   (setq org-drill-learn-fraction 0.1)
   (setq org-drill-spaced-repetition-algorithm 'sm2)
-  (setq org-plantuml-jar-path plantuml-jar-path)
-  ;; (setq org-plantuml-jar-path "~/org-modes/plantuml.beta.jar")
+  (setq org-plantuml-jar-path plantuml-jar-path))
 
-  ;; customize
-  ;; (defun jws/org-protocol-capture-p ()
-  ;;   "Return true if this capture was initiated via org-protocol."
-  ;;   (equal (buffer-name (org-capture-get :original-buffer)) " *server*"))
+;; a hack to fix org-version
+(defun org-release ()
+  "The release version of Org.
+Inserted by installing Org mode or when a release is made."
+   (let ((org-release "9.2.5"))
+     org-release))
 
-  ;; (defun jws/org-capture-after-finalize ()
-  ;;   "Delete frame if capture was initiated via org-protocol"
-  ;;   (message "jws/org-capture-after-finalize %s" (string= "fcapture" (cdr (assoc 'name (frame-parameters)))))
-  ;;   (message "%s" (cdr (assoc 'name (frame-parameters))))
-  ;;   (message "%s" (jws/org-protocol-capture-p))
-  ;;   ;; (if (jws/org-protocol-capture-p) (delete-frame))
-  ;;   )
-
-  ;; (defun jws/org-capture-initialize ()
-  ;;   "Make sure frame has only one window if capture was initiated via org-protocol"
-  ;;   (if (jws/org-protocol-capture-p) (delete-other-windows)))
-
-  ;; (add-hook 'org-capture-mode-hook 'jws/org-capture-initialize)
-  ;; (add-hook 'org-capture-after-finalize-hook 'jws/org-capture-after-finalize)
-
-  )
+(defun org-git-version ()
+  "The Git version of Org mode.
+Inserted by installing Org or when a release is made."
+   (let ((org-git-version "release_9.2.5-431-gf5d27e046"))
+     org-git-version))
 
 (use-package org-bullets
   :after org

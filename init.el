@@ -30,6 +30,7 @@
 	  (setq gc-cons-threshold 16777216
 		gc-cons-percentage 0.1))
 
+(require 'cl)
 (load (concat user-emacs-directory "core/base"))
 (load (concat user-emacs-directory "core/core"))
 (org-babel-load-file (concat user-emacs-directory "core/emacs.org"))
