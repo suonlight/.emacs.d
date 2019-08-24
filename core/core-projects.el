@@ -73,10 +73,6 @@
       (find-file absolute-file)))
 
   (ivy-add-actions
-   'counsel-fzf
-   '(("v" counsel-file-vsplit "open file in vsplit window")
-     ("s" counsel-file-split "open file in split window")))
-  (ivy-add-actions
    'counsel-projectile-find-file
    '(("v" counsel-file-vsplit "open file in vsplit window")
      ("s" counsel-file-split "open file in split window")))
@@ -187,10 +183,17 @@
   :defer 1
   :config
   (counsel-projectile-mode)
+  ;; (setq counsel-rg-base-command "rg -S --no-heading --line-number --color never '' | fzf %s")
+  ;; (setq counsel-rg-base-command "rg --column --line-number --no-heading --color=never --smart-case '' | fzf")
   (ivy-add-actions
-   'counsel-find-file
-   '(("v" counsel-file-vsplit "open file in vsplit window")
-     ("s" counsel-file-split "open file in split window"))))
+    'counsel-find-file
+    '(("v" counsel-file-vsplit "open file in vsplit window")
+       ("s" counsel-file-split "open file in split window")))
+
+  (ivy-add-actions
+    'counsel-fzf
+    '(("v" counsel-file-vsplit "open file in vsplit window")
+       ("s" counsel-file-split "open file in split window"))))
 
 (defhydra hydra-dired (:hint nil :color pink)
   "

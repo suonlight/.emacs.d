@@ -42,12 +42,14 @@
 (general-define-key
  :keymaps 'global-map
  :states '(normal visual)
- "C-p"         #'counsel-projectile-find-file)
+ ;; "C-p"         #'counsel-projectile-find-file)
+ "C-p"         #'counsel-fzf)
 
 (general-define-key
- :keymaps 'ruby-mode-map
- :states '(normal visual insert emacs)
- "s-<mouse-1>"  #'dumb-jump-go)
+  :keymaps 'ruby-mode-map
+  :states '(normal visual insert emacs)
+  "<f5>"         #'dap-ruby-smart-run
+  "s-<mouse-1>"  #'dumb-jump-go)
 
 (general-define-key
  :keymaps 'global-map
@@ -317,8 +319,8 @@
  "pc"         #'projectile-compile-project
  "pd"         #'counsel-projectile-find-dir
  "pe"         #'projectile-edit-dir-locals
- "pf"         #'counsel-projectile-find-file
- ;; "pf"         #'counsel-fzf
+ ;; "pf"         #'counsel-projectile-find-file
+ "pf"         #'counsel-fzf
  "orm"        #'counsel-insert-models
  "orc"        #'counsel-insert-controllers
  "orp"        #'counsel-insert-policies
