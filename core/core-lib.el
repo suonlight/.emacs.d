@@ -259,7 +259,8 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
 
 (defun counsel-rg-from-current-directory ()
   (interactive)
-  (counsel-rg "" (file-name-directory buffer-file-name)))
+  (let ((directory-name (read-directory-name "Dir: " (file-name-directory buffer-file-name))))
+    (counsel-rg "" directory-name)))
 
 (defun counsel-rg-thing-at-point ()
   (interactive)
