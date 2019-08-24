@@ -340,3 +340,8 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
   (multi-libvterm-projectile)
   (if (string= major-mode "vterm-mode")
       (evil-insert-state)))
+
+(require 'ansi-color)
+(defun display-ansi-colors ()
+    (interactive)
+    (ansi-color-apply-on-region (point-min) (point-max)))

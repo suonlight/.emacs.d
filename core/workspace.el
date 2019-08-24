@@ -39,6 +39,7 @@
        (string-prefix-p "magit" name)
        (string-prefix-p "*magithub" name)
        (string-prefix-p "*git-messenger" name)
+       (string-prefix-p "*Rspec" name)
        (string= "*osx-dictonary*" name)
        (string= "*Ibuffer*" name)
        (string= "*Google Translate*" name)
