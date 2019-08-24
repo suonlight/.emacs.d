@@ -18,7 +18,3 @@
 (use-package rubocop
   :after ruby-mode
   :hook (ruby-mode . rubocop-mode))
-
-(use-package rbenv
-  :after ruby-mode
-  :hook (ruby-mode . global-rbenv-mode))

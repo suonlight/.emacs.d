@@ -1,29 +1,49 @@
+(defun hero/ruby-test-smart-run ()
+  (if dap-mode
+    (dap-ruby-run-test-at-point)
+    (ruby-test-run-at-point)))
+
+(defun hero/ruby-server-smart-run ()
+  (if dap-mode
+    (dap-ruby-run-rackup)))
+
+(defun dap-ruby-smart-run ()
+  "Run Ruby test at point or Rackup"
+  (interactive)
+  (if (ruby-test-implementation-p)
+    (hero/ruby-server-smart-run)
+    (hero/ruby-test-smart-run)))
+
 (use-package dap-mode
   :commands (dap-ruby-run-test-at-point dap-ruby-run-rackup dap-mode)
   :config
-  (dap-ui-mode)
+  (dap-ui-mode 1)
+  ;; enables mouse hover support
+  (dap-tooltip-mode 1)
+  ;; use tooltips for mouse hover
+  ;; if it is not enabled `dap-mode' will use the minibuffer.
+  ;; (tooltip-mode 1)
 
-  (defun rbenv-ruby-version ()
-    (let ((version-file-path (or (rbenv--locate-file ".ruby-version")
-				 (rbenv--locate-file ".rbenv-version"))))
+  (defun hero/ruby-version ()
+    (let ((version-file-path (f-join (projectile-project-root) ".ruby-version")))
       (s-replace "ruby-" ""
 		 (-> version-file-path
 		     f-read
 		     s-trim))))
 
-  (defun rbenv-path-for (program)
+  (defun hero/ruby-path-for (program)
     (expand-file-name
-     (format "~/.rbenv/versions/%s/bin/%s" (rbenv-ruby-version) program)))
+     (format "~/.asdf/installs/ruby/%s/bin/%s" (hero/ruby-version) program)))
 
-  (defun rbenv-rspec-program ()
+  (defun hero/rspec-program ()
     (if (f-exists? (f-join (projectile-project-root) "bin/rspec"))
 	"bin/rspec"
       (expand-file-name
-       (format "~/.rbenv/versions/%s/bin/rspec" (rbenv-ruby-version)))))
+       (format "~/.asdf/installs/ruby/%s/bin/rspec" (hero/ruby-version)))))
 
-  (defun rbenv-rackup-path ()
+  (defun hero/rackup-path ()
     (expand-file-name
-     (format "~/.rbenv/versions/%s/bin/rackup" (rbenv-ruby-version))))
+     (format "~/.asdf/installs/ruby/%s/bin/rackup" (hero/ruby-version))))
 
   (defun dap-ruby--populate-start-file-args (conf)
     "Populate CONF with the required arguments."
@@ -39,7 +59,7 @@
     (interactive)
     (let ((debug-args (list :type "Ruby"
 			    :request "launch"
-			    :program (rbenv-path-for "rackup")
+			    :program (hero/ruby-path-for "rackup")
 			    :debuggerPort 23000
 			    :args '()
 			    :name "Rackup")))
@@ -103,7 +123,8 @@
     (interactive)
     (let ((debug-args (list :type "Ruby"
 			    :request "launch"
-			    :program (rbenv-rspec-program)
+			    ;; :program (rbenv-rspec-program)
+			    :program (hero/rspec-program)
 			    :args `(,(copy-file-path-with-line))
 			    :environment-variables '(("DISABLE_SPRING" . "true"))
 			    :name "Rspec File At Point")))
@@ -116,7 +137,7 @@
     (interactive)
     (let ((debug-args (list :type "Ruby"
 			    :request "launch"
-			    :program (rbenv-path-for "rspec")
+			    :program (hero/ruby-path-for "rspec")
 			    :environment-variables '(("DISABLE_SPRING" . "true"))
 			    :args `(,buffer-file-name)
 			    :name "Rspec File")))
@@ -126,13 +147,6 @@
 
   (setq dap-ruby-debug-program `("node" ,(expand-file-name "~/.emacs.d/.extension/vscode/rebornix.Ruby/extension/out/debugger/main.js")))
   (dap-register-debug-provider "Ruby" 'dap-ruby--populate-start-file-args)
-
-  (defun dap-ruby-smart-run ()
-    "Run Ruby test at point or Rackup"
-    (interactive)
-    (if (ruby-test-implementation-p)
-	(dap-ruby-run-rackup)
-      (dap-ruby-run-test-at-point)))
 
   (defun dap-node-run-test ()
     "Run JUnit test.
@@ -214,11 +228,6 @@
    "s-S-<f8>"     #'dap-ui-breakpoints
    "s-."          #'dap-hydra
    "s-<f8>"       #'dap-breakpoint-toggle)
-
-  (general-define-key
-   :states '(normal visual emacs)
-   :keymaps 'ruby-mode-map
-   "<f5>"       #'dap-ruby-smart-run)
 
   (leader-define-key ruby-mode-map
     "d"    #'(:ignore t :which-key "debugger")
