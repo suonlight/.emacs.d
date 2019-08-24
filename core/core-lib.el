@@ -305,11 +305,14 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
 (defun split-window-vertically-2 ()
   "Split screen to 2 windows"
   (interactive)
-  (let ((w (selected-window)))
+  (let* ((w (selected-window))
+        (previous-place (evil-alternate-buffer)))
     (delete-other-windows)
     (split-window-right)
     (select-window (next-window))
-    (centaur-tabs-backward-tab)
+    (when previous-place
+      (switch-to-buffer (car previous-place))
+      (goto-char (car (last previous-place))))
     (select-window w)))
 
 (defun split-window-vertically-3 ()
@@ -319,7 +322,7 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
     (delete-other-windows)
     (split-window-right)
     (select-window (next-window))
-    (centaur-tabs-backward-tab)
+    (evil-switch-to-windows-last-buffer)
     (split-window-right)
     (select-window (next-window))
     (centaur-tabs-backward-tab)
