@@ -496,6 +496,10 @@
  "Ts"        #'counsel-load-theme
  "Tn"        #'next-cycle-theme
 
+ ;; Toggle
+ "t"         #'(:ignore t :which-key "toggle")
+ "ti"        #'indent-guide-global-mode
+
  ;; Git
  "g"         #'(:ignore t :which-key "git")
  "gs"        #'magit-status

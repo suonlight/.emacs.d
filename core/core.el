@@ -69,10 +69,7 @@
 (setq-default flycheck-disabled-checkers '(ruby-reek emacs-lisp emacs-lisp-checkdoc javascript-jshint))
 
 (use-package indent-guide
-  :hook ((ruby-mode . indent-guide-mode)
-	 (yaml-mode . indent-guide-mode)
-	 ;; (js2-mode . indent-guide-mode)
-	 (js-mode . indent-guide-mode)))
+  :commands (indent-guide-mode))
 
 
 (use-package iedit :bind ("C-;" . iedit-mode))
