@@ -40,10 +40,12 @@
  "q"       #'quit-window)
 
 (general-define-key
- :keymaps 'global-map
- :states '(normal visual)
- ;; "C-p"         #'counsel-projectile-find-file)
- "C-p"         #'counsel-fzf)
+  :keymaps 'global-map
+  :states '(normal visual)
+  "C-p"         #'counsel-projectile-find-file
+  ;; "C-p"         #'counsel-fzf
+  ;; "C-p"         #'fzf
+  )
 
 (general-define-key
   :keymaps 'ruby-mode-map
@@ -254,8 +256,6 @@
  "C-j"         #'evil-window-down
  "C-k"         #'evil-window-up
  "C-l"         #'evil-window-right
- ;; "C-p"         #'counsel-projectile-find-file
- ;; "C-p"         #'counsel-fzf
  "C-TAB"       #'yas-expand
  "s-s"         #'save-buffer
  "s-w"         #'kill-this-buffer
@@ -319,8 +319,8 @@
  "pc"         #'projectile-compile-project
  "pd"         #'counsel-projectile-find-dir
  "pe"         #'projectile-edit-dir-locals
- ;; "pf"         #'counsel-projectile-find-file
- "pf"         #'counsel-fzf
+ "pf"         #'counsel-projectile-find-file
+ ;; "pf"         #'counsel-fzf
  "orm"        #'counsel-insert-models
  "orc"        #'counsel-insert-controllers
  "orp"        #'counsel-insert-policies

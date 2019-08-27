@@ -183,6 +183,7 @@
   :defer 1
   :config
   (counsel-projectile-mode)
+  (setq projectile-enable-caching t)
   ;; (setq counsel-rg-base-command "rg -S --no-heading --line-number --color never '' | fzf %s")
   ;; (setq counsel-rg-base-command "rg --column --line-number --no-heading --color=never --smart-case '' | fzf")
   (ivy-add-actions
