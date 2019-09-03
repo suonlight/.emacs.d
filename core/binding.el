@@ -35,6 +35,11 @@
  "q"       #'osx-dictionary-quit)
 
 (general-define-key
+ :keymaps 'magit-revision-mode-map
+ :states 'normal
+ "o"       #'git-link-commit)
+
+(general-define-key
  :keymaps 'racer-help-mode-map
  :states 'normal
  "q"       #'quit-window)
