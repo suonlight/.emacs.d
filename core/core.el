@@ -45,8 +45,7 @@
   :config (global-evil-matchit-mode))
 
 (use-package evil-goggles
-  :after evil
-  :config (evil-goggles-mode))
+  :commands (evil-goggles-mode))
 
 (use-package evil-string-inflection :after evil :commands evil-operator-string-inflection)
 
@@ -70,7 +69,6 @@
 
 (use-package indent-guide
   :commands (indent-guide-mode))
-
 
 (use-package iedit :bind ("C-;" . iedit-mode))
 
@@ -115,3 +113,4 @@
 (load (concat user-emacs-directory "core/lang-others"))
 (load (concat user-emacs-directory "core/auto-complete"))
 (load (concat user-emacs-directory "core/org-mode"))
+(load (concat user-emacs-directory "core/lsp"))
