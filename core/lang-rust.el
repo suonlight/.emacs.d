@@ -1,5 +1,5 @@
 (use-package rust-mode
-  ;; :hook (rust-mode . lsp)
+  :hook (rust-mode . lsp)
   :defer t
   :hook (rust-mode . yas-minor-mode)
   :config (setq rust-format-on-save t))

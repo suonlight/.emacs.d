@@ -32,6 +32,7 @@
        (string-prefix-p "*helm" name)
        (string-prefix-p "*Compile-Log*" name)
        (string-prefix-p "*lsp" name)
+       (string-prefix-p "*fzf" name)
        (string-prefix-p "*Ido" name)
        (string-prefix-p "*prodigy" name)
        (string-prefix-p "*RuboCop" name)
