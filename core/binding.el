@@ -503,6 +503,7 @@
  "t"         #'(:ignore t :which-key "toggle")
  "ti"        #'indent-guide-global-mode
  "tg"        #'evil-goggles-mode
+ "tn"        #'global-display-line-numbers-mode
 
  ;; Git
  "g"         #'(:ignore t :which-key "git")

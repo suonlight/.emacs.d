@@ -1,5 +1,7 @@
 ;;; -*- lexical-binding: t; -*-
 
+(setq display-line-numbers-type 'relative)
+
 (use-package which-key
   :defer .1
   :custom
