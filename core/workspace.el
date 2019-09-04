@@ -116,6 +116,7 @@
     ("n" persp-next "Next Layout" :column "Go to")
     ("p" persp-prev "Prev Layout")
     ("l" persp-switch "Switch Layout")
+    ("[0-9]" nil "Switch layout number")
     ("0" persp-switch-to-0)
     ("1" persp-switch-to-1)
     ("2" persp-switch-to-2)
@@ -128,8 +129,8 @@
     ("9" persp-switch-to-9)
     ("<tab>" persp-switch-last-layout)
 
-    ("d" persp-kill :column "Actions")
-    ("r" persp-rename)
+    ("d" persp-kill "Delete Layout" :column "Actions")
+    ("r" persp-rename "Rename Layout")
     ("s" persp-save-state-to-file "Save Layout")
     ("L" persp-load-state-from-file "Load Layout")
     ("q" nil "cancel" :color blue :column nil))
