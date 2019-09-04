@@ -325,10 +325,6 @@
  "pd"         #'counsel-projectile-find-dir
  "pe"         #'projectile-edit-dir-locals
  "pf"         #'counsel-projectile-find-file
- ;; "pf"         #'counsel-fzf
- "orm"        #'counsel-insert-models
- "orc"        #'counsel-insert-controllers
- "orp"        #'counsel-insert-policies
  "pg"         #'projectile-find-tag
  "pk"         #'projectile-kill-buffers
  ;; "po"         #'org-projectile/goto-todos
@@ -358,7 +354,9 @@
  "fR"         #'rename-buffer
  "fC"         #'copy-this-file
  "fb"         #'counsel-bookmark
+ "fe"         #'(:ignore t :which-key "edit")
  "fed"        #'open-config-file
+ "fez"        #'open-zsh-file
  "ff"         #'counsel-find-file
  "fg"         #'rgrep
  "fh"         #'hexl-find-file

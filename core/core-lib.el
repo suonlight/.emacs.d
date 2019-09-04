@@ -278,6 +278,10 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
   (interactive)
   (switch-to-buffer "*scratch*"))
 
+(defun open-zsh-file ()
+  (interactive)
+  (find-file "~/.zshrc"))
+
 (defun list-processes-other-window ()
   (interactive)
   (list-processes)
