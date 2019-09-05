@@ -116,7 +116,6 @@
     ("n" persp-next "Next Layout" :column "Go to")
     ("p" persp-prev "Prev Layout")
     ("l" persp-switch "Switch Layout")
-    ("[0-9]" nil "Switch layout number")
     ("0" persp-switch-to-0)
     ("1" persp-switch-to-1)
     ("2" persp-switch-to-2)
@@ -127,7 +126,7 @@
     ("7" persp-switch-to-7)
     ("8" persp-switch-to-8)
     ("9" persp-switch-to-9)
-    ("<tab>" persp-switch-last-layout)
+    ("<tab>" persp-switch-last-layout "Last Layout")
 
     ("d" persp-kill "Delete Layout" :column "Actions")
     ("r" persp-rename "Rename Layout")
@@ -138,6 +137,7 @@
 
 (defun ivy-persp-switch-project (arg)
   (interactive "P")
+  (require 'counsel-projectile)
   (ivy-read "Switch to Project Perspective: "
 	    (if (projectile-project-p)
 		(cons (abbreviate-file-name (projectile-project-root))
