@@ -15,10 +15,15 @@
   (setq ivy-initial-inputs-alist nil)
   :config
   (message "Rebuild ivy-re-builders-alist")
+
+  (setq projectile-sort-order 'recently-active)
+  ;; (setq projectile-sort-order 'access-time)
+  (setq projectile-indexing-method 'hybrid)
+
   (setq ivy-re-builders-alist '((ivy-switch-buffer . ivy--regex-fuzzy)
-				(swiper . ivy--regex-plus)
-				;; (counsel-projectile-find-file . ivy--regex-fuzzy)
-				(t . ivy--regex-plus)))
+                                  (swiper . ivy--regex-plus)
+                                  ;; (counsel-projectile-find-file . ivy--regex-fuzzy)
+                                  (t . ivy--regex-fuzzy)))
 
   (defun counsel-insert-models ()
     (interactive)
@@ -184,6 +189,7 @@
   :config
   (counsel-projectile-mode)
   (setq projectile-enable-caching t)
+  (setq counsel-projectile-sort-files t)
   ;; (setq counsel-rg-base-command "rg -S --no-heading --line-number --color never '' | fzf %s")
   ;; (setq counsel-rg-base-command "rg --column --line-number --no-heading --color=never --smart-case '' | fzf")
   (ivy-add-actions
@@ -250,3 +256,16 @@ T - tag prefix
 (require 'dired)
 (define-key dired-mode-map "." 'hydra-dired/body)
 (define-key dired-mode-map (kbd "SPC") nil)
+
+(use-package exec-path-from-shell
+  :config
+  (setq exec-path-from-shell-check-startup-files nil)
+  (exec-path-from-shell-initialize))
+
+(use-package prescient)
+(use-package ivy-prescient
+  :config
+  (ivy-prescient-mode)
+  (prescient-persist-mode)
+  (setq ivy-prescient-sort-commands (counsel-find-library counsel-projectile-find-file))
+  )
