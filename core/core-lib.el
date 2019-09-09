@@ -278,6 +278,18 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
   (interactive)
   (switch-to-buffer "*scratch*"))
 
+(defun open-mindfulness-buffer ()
+  (interactive)
+  (make-frame '((name . "Mindfulness")))
+  (with-current-buffer (get-buffer-create "*mindfulness*")
+    (insert-image (create-image "~/.emacs.d/assets/mindfulness_1.jpg" 'imagemagick nil :height 300 :width 300))
+    (insert "\n\nVào, ra\nSâu, chậm\nKhỏe, nhẹ\nLắng, Cười\nHiện tại, Tuyệt vời\n")
+    (switch-to-buffer (current-buffer))
+    (delete-other-windows)
+    (toggle-frame-maximized)
+    (text-scale-increase +3)
+    (set-fringe-style '(200 . 200))))
+
 (defun open-zsh-file ()
   (interactive)
   (find-file "~/.zshrc"))

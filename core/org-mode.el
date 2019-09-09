@@ -370,7 +370,11 @@ Argument PARAMS the org parameters of the code block."
   :commands (org-tree-slide-mode org-tree-slide-skip-done-toggle)
   :config (org-tree-slide-simple-profile))
 
-(use-package org-pomodoro :after org :commands org-pomodoro)
+(use-package org-pomodoro
+  :after org
+  :commands org-pomodoro
+  :config
+  (add-hook 'org-pomodoro-finished-hook #'open-mindfulness-buffer))
 
 (defun org-in-any-block-p ()
   "Return non-nil if the point is in any Org block.
