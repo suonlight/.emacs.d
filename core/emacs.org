@@ -62,20 +62,6 @@
 
    #+END_SRC
 
-** centered window mode
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package centered-window
-       :commands centered-window-mode
-       :config (setq cwm-centered-window-width 200))
-
-     (use-package winner
-       :commands (winner-undo window-redo)
-       :config (winner-mode))
-   #+END_SRC
-
-   #+RESULTS:
-
 ** Dictionaries
    #+BEGIN_SRC emacs-lisp
      (use-package google-translate

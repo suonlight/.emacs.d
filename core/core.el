@@ -88,7 +88,6 @@
   :delight editorconfig-mode
   :hook (after-init . editorconfig-mode))
 
-
 (use-package move-text
   ;; :config (move-text-default-bindings)
   :bind (
@@ -99,9 +98,14 @@
 
 (use-package request)
 
+;; window
 (use-package winum
   :config
   (winum-mode))
+
+(use-package winner
+  :commands (winner-undo window-redo)
+  :config (winner-mode))
 
 (load (concat user-emacs-directory "core/binding"))
 (load (concat user-emacs-directory "core/core-lib"))
