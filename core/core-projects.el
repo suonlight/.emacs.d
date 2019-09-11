@@ -266,6 +266,4 @@ T - tag prefix
 (use-package ivy-prescient
   :config
   (ivy-prescient-mode)
-  (prescient-persist-mode)
-  (setq ivy-prescient-sort-commands (counsel-find-library counsel-projectile-find-file))
-  )
+  (prescient-persist-mode))

@@ -11,6 +11,11 @@
 
 (use-package evil
   ;; :defer .1
+  :bind (
+	 :map evil-visual-state-map ("s-p" . drag-stuff-up) ("s-n" . drag-stuff-down)
+	 :map evil-normal-state-map
+	 ("s-p" . move-text-line-up)
+	 ("s-n" . move-text-line-down))
   :init
   (setq evil-want-C-u-scroll t)
   (setq evil-search-module 'evil-search)
@@ -88,13 +93,10 @@
   :delight editorconfig-mode
   :hook (after-init . editorconfig-mode))
 
-(use-package move-text
-  ;; :config (move-text-default-bindings)
-  :bind (
-	 ;; :map evil-visual-state-map ("s-p" . move-text-region-up) ("s-n" . move-text-region-down)
-	 :map evil-normal-state-map
-	 ("s-p" . move-text-line-up)
-	 ("s-n" . move-text-line-down)))
+(use-package drag-stuff
+  :config (drag-stuff-global-mode 1))
+
+(use-package move-text)
 
 (use-package request)
 
