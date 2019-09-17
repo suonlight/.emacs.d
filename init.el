@@ -34,8 +34,6 @@
 (load (concat user-emacs-directory "core/base"))
 (load (concat user-emacs-directory "core/core"))
 (org-babel-load-file (concat user-emacs-directory "core/emacs.org"))
-(load (concat user-emacs-directory "core/workspace"))
-(load (concat user-emacs-directory "core/terminal"))
 
 (let ((private-file (concat user-emacs-directory "private/init.el")))
   (when (file-exists-p private-file)

@@ -12,6 +12,7 @@
  "o"       #'evil-insert-resume
  "i"       #'evil-insert-resume)
 
+
 (general-define-key
  :keymaps 'comint-mode-map
  :states 'insert
@@ -51,6 +52,18 @@
   ;; "C-p"         #'counsel-fzf
   ;; "C-p"         #'fzf
   )
+
+(general-define-key
+  :keymaps 'global-map
+  :states '(visual)
+  "s-p"         #'drag-stuff-up
+  "s-n"         #'drag-stuff-down)
+
+(general-define-key
+  :keymaps 'global-map
+  :states '(normal)
+  "s-p"         #'move-text-line-up
+  "s-n"         #'move-text-line-down)
 
 (general-define-key
   :keymaps 'ruby-mode-map
@@ -315,7 +328,7 @@
  "p&"         #'projectile-run-async-shell-command-in-root
  "pD"         #'projectile-dired
  "pF"         #'projectile-find-file-dwim
- "pG"         #'projectile-regenerate-tags
+ "pG"         #'counsel-etags-virtual-update-tags
  "pI"         #'projectile-invalidate-cache
  "pR"         #'projectile-replace
  "pT"         #'projectile-test-project

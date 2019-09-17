@@ -10,6 +10,8 @@
 	  company-preview-frontend
 	  company-echo-metadata-frontend))
   (setq tab-always-indent 'complete)
+  ;; Number the candidates (use M-1, M-2 etc to select completions).
+  (setq company-show-numbers t)
   ;; (setq company-backends ())
   ;; (defvar completion-at-point-functions-saved nil)
   :hook (after-init . global-company-mode)

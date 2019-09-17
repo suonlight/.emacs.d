@@ -11,11 +11,6 @@
 
 (use-package evil
   ;; :defer .1
-  :bind (
-	 :map evil-visual-state-map ("s-p" . drag-stuff-up) ("s-n" . drag-stuff-down)
-	 :map evil-normal-state-map
-	 ("s-p" . move-text-line-up)
-	 ("s-n" . move-text-line-down))
   :init
   (setq evil-want-C-u-scroll t)
   (setq evil-search-module 'evil-search)
@@ -94,14 +89,15 @@
   :hook (after-init . editorconfig-mode))
 
 (use-package drag-stuff
+  :commands (drag-stuff-up drag-stuff-down)
   :config (drag-stuff-global-mode 1))
 
-(use-package move-text)
-
-(use-package request)
+(use-package move-text
+  :commands (move-text-line-up move-text-line-down))
 
 ;; window
 (use-package winum
+  :defer t
   :config
   (winum-mode))
 
@@ -114,11 +110,13 @@
 (load (concat user-emacs-directory "core/core-projects"))
 (load (concat user-emacs-directory "core/core-git"))
 (load (concat user-emacs-directory "core/core-ui"))
-(load (concat user-emacs-directory "core/debugger"))
+(load (concat user-emacs-directory "core/workspace"))
+(load (concat user-emacs-directory "core/terminal"))
 (load (concat user-emacs-directory "core/lang-ruby"))
 (load (concat user-emacs-directory "core/lang-rust"))
 (load (concat user-emacs-directory "core/lang-js"))
 (load (concat user-emacs-directory "core/lang-others"))
-(load (concat user-emacs-directory "core/auto-complete"))
 (load (concat user-emacs-directory "core/org-mode"))
+(load (concat user-emacs-directory "core/auto-complete"))
+(load (concat user-emacs-directory "core/debugger"))
 (load (concat user-emacs-directory "core/lsp"))
