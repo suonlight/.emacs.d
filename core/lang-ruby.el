@@ -1,10 +1,8 @@
 (use-package ruby-test-mode
-  :hook (ruby-mode . ruby-test-mode)
-  :after ruby-mode)
+  :hook (ruby-mode . ruby-test-mode))
 
 (use-package ruby-end
   :hook (ruby-mode . ruby-end-mode)
-  :after ruby-mode
   :custom
   (ruby-end-insert-newline nil))
 
@@ -18,3 +16,12 @@
 (use-package rubocop
   :after ruby-mode
   :hook (ruby-mode . rubocop-mode))
+
+(defun ruby-test-spec-command (filename &optional line-number)
+  "Return command to run spec in FILENAME at LINE-NUMBER."
+  (let ((command "bundle exec spring rspec")
+        (options ruby-test-rspec-options)
+        (filename (if line-number
+                      (format "%s:%s" filename line-number)
+                    filename)))
+    (format "%s %s %s" command (mapconcat 'identity options " ") filename)))

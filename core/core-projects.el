@@ -276,5 +276,6 @@ T - tag prefix
             'counsel-etags-virtual-update-tags 'append 'local)))
   :config
   (setq counsel-etags-update-interval 60)
+  (setq counsel-etags-tags-program "/usr/local/bin/ctags")
   (add-to-list 'counsel-etags-ignore-directories "build"))
 

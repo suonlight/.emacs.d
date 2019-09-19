@@ -27,7 +27,7 @@
       gc-cons-percentage 0.6)
 
 (add-hook 'emacs-startup-hook
-	  (setq gc-cons-threshold 16777216
+	  (setq gc-cons-threshold 100000000
 		gc-cons-percentage 0.1))
 
 (require 'cl)

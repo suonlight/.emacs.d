@@ -1,16 +1,19 @@
 (use-package lsp-mode
   ;; :hook (prog-major-mode . lsp-prog-major-mode-enable)
   ;; :hook (ruby-mode . lsp-ruby-mode-enable)
-  :commands lsp
+  :hook ((js-mode . lsp-deferred)
+         (ruby-mode . lsp-deferred))
+  :commands (lsp lsp-deferred)
   ;; :init (add-hook 'ruby-mode #'lsp-ruby-mode-enable)
   ;; :init (add-hook 'prog-major-mode #'lsp-prog-major-mode-enable)
-  ;; :config
-  ;; (setq lsp-prefer-flymake nil
-  ;; 	lsp-auto-guess-root t
-  ;; 	lsp-keep-workspace-alive nil)
+  :config
+  (setq lsp-ui-sideline-enable nil)
+  (setq lsp-prefer-flymake nil
+  	lsp-auto-guess-root t
+  	lsp-keep-workspace-alive nil)
   ;; (ht-set! lsp--default-notification-handlers "client/registerCapability" 'ignore)
 
-  ;; (setq lsp-response-timeout 5)
+  (setq lsp-response-timeout 5)
   ;; (setq lsp-print-io t)
   ;; (setq lsp-eldoc-render-all t)
 
@@ -27,7 +30,6 @@
   ;; 		    :initialization-options #'lsp-clients-ruby--make-init-options
   ;; 		    :priority -1
   ;; 		    :server-id 'm-ruby-ls))
-
   )
 
 (use-package lsp-ui :commands lsp-ui-mode)

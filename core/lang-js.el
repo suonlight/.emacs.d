@@ -3,9 +3,9 @@
 
 (use-package prettier-js
   :hook ((js-mode . prettier-js-mode)
-	 (web-mode . prettier-js-mode)))
+          (web-mode . prettier-js-mode)))
 
-(use-package import-js)
+(use-package import-js :defer t)
 
 ;; prevent eslint check command: eslint --print-config .
 (advice-add 'flycheck-eslint-config-exists-p :override (lambda() t))

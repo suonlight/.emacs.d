@@ -357,7 +357,8 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
   (interactive)
   (multi-libvterm-projectile)
   (if (string= major-mode "vterm-mode")
-      (evil-insert-state)))
+    (evil-insert-state))
+  (balance-windows-area))
 
 (require 'ansi-color)
 (defun display-ansi-colors ()
