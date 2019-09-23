@@ -1,8 +1,8 @@
 (use-package lsp-mode
   ;; :hook (prog-major-mode . lsp-prog-major-mode-enable)
   ;; :hook (ruby-mode . lsp-ruby-mode-enable)
-  :hook ((js-mode . lsp-deferred)
-         (ruby-mode . lsp-deferred))
+  ;; :hook ((js-mode . lsp-deferred)
+  ;;        (ruby-mode . lsp-deferred))
   :commands (lsp lsp-deferred)
   ;; :init (add-hook 'ruby-mode #'lsp-ruby-mode-enable)
   ;; :init (add-hook 'prog-major-mode #'lsp-prog-major-mode-enable)

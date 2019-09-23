@@ -57,8 +57,10 @@
 
 (use-package dumb-jump
   :commands (dumb-jump-go-other-window dumb-jump-go dumb-jump-back dumb-jump-go-prefer-external dumb-jump-go-prefer-external-other-window)
-  :init
+  :config
+  (setq dumb-jump-default-project "~/projects")
   (setq dumb-jump-selector 'ivy)
+  (setq dumb-jump-force-searcher 'rg)
   (setq dumb-jump-prefer-searcher 'rg))
 
 (use-package flycheck
@@ -104,6 +106,9 @@
 (use-package winner
   :commands (winner-undo window-redo)
   :config (winner-mode))
+
+(use-package request
+  :commands request)
 
 (load (concat user-emacs-directory "core/binding"))
 (load (concat user-emacs-directory "core/core-lib"))

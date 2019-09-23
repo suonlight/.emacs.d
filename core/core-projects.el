@@ -171,13 +171,9 @@
 (use-package ivy-hydra :after ivy)
 
 (defhydra hydra-buffer (:hint nil :color pink)
-  ("0" centaur-tabs-select-beg-tab "Begin tab" :column "Navigation")
-  ("$" centaur-tabs-select-end-tab "End tab" )
-  ("n" centaur-tabs-forward-tab "Next tab")
-  ("p" centaur-tabs-backward-tab "Prev tab")
-  ("d" kill-this-buffer "Kill tab" :column "Actions" :exit t)
-  (">" centaur-tabs-move-current-tab-to-right "Move right")
-  ("<" centaur-tabs-move-current-tab-to-left "Move left")
+  ("n" next-buffer "Next buffer")
+  ("p" previous-buffer "Prev buffer")
+  ("d" kill-this-buffer "Kill buffer" :column "Actions" :exit t)
   ("i" ibuffer "Ibuffer" :exit t :column "Open")
   ("m" view-echo-area-messages "Message" :exit t)
   ("b" ivy-switch-buffer "Switch buffer" :exit t)
@@ -254,7 +250,7 @@ T - tag prefix
   ("." nil :color blue))
 
 (require 'dired)
-(define-key dired-mode-map "." 'hydra-dired/body)
+(define-key dired-mode-map "." #'hydra-dired/body)
 (define-key dired-mode-map (kbd "SPC") nil)
 
 (use-package exec-path-from-shell
@@ -275,7 +271,8 @@ T - tag prefix
           (add-hook 'after-save-hook
             'counsel-etags-virtual-update-tags 'append 'local)))
   :config
-  (setq counsel-etags-update-interval 60)
+  (setq tags-revert-without-query 1)
+  (setq counsel-etags-update-interval 600)
   (setq counsel-etags-tags-program "/usr/local/bin/ctags")
   (add-to-list 'counsel-etags-ignore-directories "build"))
 

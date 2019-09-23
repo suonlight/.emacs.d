@@ -2,6 +2,47 @@
 (use-package general)
 
 (general-define-key
+  :states '(normal)
+  :keymaps 'xref--xref-buffer-mode-map
+  "q"  #'quit-window
+  "gj" #'xref-next-line
+  "gk" #'xref-prev-line
+  (kbd "C-j") #'xref-next-line
+  (kbd "C-k") #'xref-prev-line
+  "]]" #'xref-next-line
+  "[[" #'xref-prev-line
+  "r"  #'xref-query-replace-in-results
+  ;; Match `dired''s `dired-do-find-regexp-and-replace'.
+  "Q"            #'xref-query-replace-in-results
+  ;; open
+  "RET"          #'xref-goto-xref
+  "S-<return>"   #'xref-show-location-at-point
+  "o"            #'xref-show-location-at-point
+  "go"           #'xref-show-location-at-point)
+
+(general-define-key
+  :states '(normal motion)
+  :keymaps 'ivy-occur-grep-mode-map
+  [mouse-1] #'ivy-occur-click
+  "d"     #'ivy-occur-delete-candidate
+  "i"     #'ivy-wgrep-change-to-wgrep-mode
+  "gd"    #'ivy-occur-delete-candidate
+  "RET"   #'ivy-occur-press-and-switch
+  "j"     #'ivy-occur-next-line
+  "k"     #'ivy-occur-previous-line
+  "h"     #'evil-backward-char
+  "l"     #'evil-forward-char
+  "g"     nil
+  "gg"    #'evil-goto-first-line
+  "gf"    #'ivy-occur-press
+  "gr"    #'ivy-occur-revert-buffer
+  "ga"    #'ivy-occur-read-action
+  "go"    #'ivy-occur-dispatch
+  "gc"    #'ivy-occur-toggle-calling
+  "0"     #'evil-digit-argument-or-evil-beginning-of-line
+  "q"     #'quit-window)
+
+(general-define-key
  :states '(normal visual emacs)
  :keymaps 'flycheck-error-list-mode-map
  "q" #'quit-window)
@@ -66,15 +107,61 @@
   "s-n"         #'move-text-line-down)
 
 (general-define-key
+  :keymaps 'dired-mode-map
+  :states '(normal emacs)
+  "\\" #'dired-do-ispell
+  "(" #'dired-hide-details-mode
+  ")" #'dired-omit-mode
+  "+" #'dired-create-directory
+  "=" #'diredp-ediff         ;; smart diff
+  "?" #'dired-summary
+  "$" #'diredp-hide-subdir-nomove
+  "A" #'dired-do-find-regexp
+  "C" #'dired-do-copy        ;; Copy all marked files
+  "D" #'dired-do-delete
+  "E" #'dired-mark-extension
+  "e" #'dired-ediff-files
+  "^" #'dired-up-directory
+  "F" #'dired-do-find-marked-files
+  "G" #'dired-do-chgrp
+  "g" #'revert-buffer        ;; read all directories again (refresh)
+  "i" #'dired-maybe-insert-subdir
+  "l" #'dired-do-redisplay   ;; relist the marked or singel directory
+  "M" #'dired-do-chmod
+  "m" #'dired-mark
+  "O" #'dired-display-file
+  "o" #'dired-find-file-other-window
+  "Q" #'dired-do-find-regexp-and-replace
+  "R" #'dired-do-rename
+  "r" #'dired-do-rsynch
+  "S" #'dired-do-symlink
+  "s" #'dired-sort-toggle-or-edit
+  "t" #'dired-toggle-marks
+  "U" #'dired-unmark-all-marks
+  "u" #'dired-unmark
+  "v" #'dired-view-file      ;; q to exit, s to search, = gets line #
+  "w" #'dired-kill-subdir
+  "Y" #'dired-do-relsymlink
+  "z" #'diredp-compress-this-file
+  "Z" #'dired-do-compress)
+
+(general-define-key
   :keymaps 'ruby-mode-map
   :states '(normal visual insert emacs)
   "<f5>"         #'dap-ruby-smart-run
   "s-<mouse-1>"  #'dumb-jump-go)
 
 (general-define-key
- :keymaps 'global-map
- :states '(normal visual)
- "gy"          (general-simulate-key "yyPgcc" :state 'normal))
+  :keymaps 'global-map
+  :states '(normal visual)
+  "g]"          #'dumb-jump-go
+  "g["          #'dumb-jump-back
+  "gy"          (general-simulate-key "yyPgcc" :state 'normal))
+
+(general-define-key
+  :keymaps 'lsp-mode-map
+  :states 'normal
+  "gd"     #'lsp-find-definition)
 
 ;; (global-set-key (kbd "M-v") #'yank)
 
@@ -210,10 +297,13 @@
   "p'"         #'org-tree-slide-mode
   "ps"         #'org-tree-slide-skip-done-toggle
   )
+
 (leader-define-key emacs-lisp-mode-map
+  "e"  #'(:ignore t :which-key "eval")
   "er" #'eval-region
   "eb" #'eval-buffer
   "ee" #'eval-expression)
+
 (leader-define-key ruby-mode-map
   "'"    #'inf-ruby-console-auto
   "d"    #'(:ignore t :which-key "debugger")
@@ -229,24 +319,34 @@
   "c" #'multi-term)
 
 (leader-define-key ruby-test-mode-map
+  "l"  #'(:ignore t :which-key "lsp")
+  "l'" #'lsp
+  "ls" #'lsp-disconnect
+  "g"  #'(:ignore t :which-key "go")
   "gG" #'dumb-jump-go-other-window
   "gg" #'dumb-jump-go
   "gb" #'dumb-jump-back
   "gx" #'dumb-jump-go-prefer-external
   "gz" #'dumb-jump-go-prefer-external-other-window
 
+  "t"  #'(:ignore t :which-key "test")
   "tb" #'ruby-test-run
   "tt" #'ruby-test-run-at-point)
 
 ;; (leader-define-key js2-mode-map
 (leader-define-key js-mode-map
+  "l"  #'(:ignore t :which-key "lsp")
+  "l'" #'lsp
+  "ls" #'lsp-disconnect
   "d"  #'(:ignore t :which-key "debugger")
   "d'" #'dap-mode
+  "g"  #'(:ignore t :which-key "go")
   "gG" #'dumb-jump-go-other-window
   "gg" #'dumb-jump-go
   "gb" #'dumb-jump-back
   "gx" #'dumb-jump-go-prefer-external
   "gz" #'dumb-jump-go-prefer-external-other-window
+  "I"  #'(:ignore t :which-key "import-js")
   "I'" #'run-import-js
   "Ii" #'import-js-import
   "If" #'import-js-fix)
@@ -254,8 +354,6 @@
 (general-define-key
  :keymaps 'global-map
  :states '(normal visual insert emacs)
- "s-k"         #'centaur-tabs-forward-tab
- "s-j"         #'centaur-tabs-backward-tab
  "s-}"         #'persp-next
  "s-{"         #'persp-prev
  "s-]"         #'persp-next
@@ -267,6 +365,42 @@
  "<f11>"       #'(sl/persp-hydra/body :which-key "layouts")
  "<f12>"       #'prodigy-as-default-layout
  "s-<f12>"     #'list-processes-other-window)
+
+
+(general-define-key
+  :keymaps 'vterm-mode-map
+  :states 'insert
+  "C-e"      #'vterm--self-insert
+  "C-f"      #'vterm--self-insert
+  "C-a"      #'vterm--self-insert
+  "C-v"      #'vterm--self-insert
+  "C-b"      #'vterm--self-insert
+  "C-w"      #'vterm--self-insert
+  "C-u"      #'vterm--self-insert
+  "C-d"      #'vterm--self-insert
+  "C-n"      #'vterm--self-insert
+  "C-m"      #'vterm--self-insert
+  "C-p"      #'vterm--self-insert
+  "C-j"      #'vterm--self-insert
+  "C-k"      #'vterm--self-insert
+  "C-r"      #'vterm--self-insert
+  "C-t"      #'vterm--self-insert
+  "C-g"      #'vterm--self-insert
+  "C-c"      #'vterm--self-insert
+  "C-SPC"    #'vterm--self-insert)
+
+(general-define-key
+  :keymaps 'vterm-mode-map
+  :states 'normal
+  "C-d"      #'vterm--self-insert
+  ",c"       #'multi-libvterm
+  ",n"       #'multi-libvterm-next
+  ",p"       #'multi-libvterm-prev
+  "s-k"      #'multi-libvterm-next
+  "s-j"      #'multi-libvterm-prev
+  "i"        #'evil-insert-resume
+  "o"        #'evil-insert-resume
+  "<return>" #'evil-insert-resume)
 
 (general-define-key
  :states '(normal visual insert emacs motion)
@@ -383,17 +517,9 @@
  "b."         #'hydra-buffer/body
  "bi"         #'ibuffer
  "bb"         #'ivy-switch-buffer
- ;; "bb"         #'sl/switch-buffer
  "bm"         #'view-echo-area-messages
- ;; "bn"         #'next-buffer
- ;; "bp"         #'previous-buffer
- "b0"         #'centaur-tabs-select-beg-tab
- "b$"         #'centaur-tabs-select-end-tab
- "bn"         #'centaur-tabs-forward-tab
- "bp"         #'centaur-tabs-backward-tab
- "bj"         #'centaur-tabs-select-visible-tab
- "b<"         #'centaur-tabs-move-current-tab-to-left
- "b>"         #'centaur-tabs-move-current-tab-to-right
+ "bn"         #'next-buffer
+ "bp"         #'previous-buffer
  "bw"         #'read-only-mode
  "bd"         #'kill-this-buffer
  "bs"         #'open-scratch-buffer

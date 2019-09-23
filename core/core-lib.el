@@ -301,15 +301,6 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
   (list-processes)
   (switch-to-buffer-other-window "*Process List*"))
 
-(defun prodigy-centaur-tabs-group ()
-  "Jump to project by awesome tab group"
-  (interactive)
-  (-when-let (service (prodigy-service-at-pos))
-    (let* ((project-name (f-expand (prodigy-service-cwd service)))
-	   (group-to-switch (format "Project: %s/" project-name))
-	   (result (centaur-tabs-switch-group group-to-switch)))
-      (when (listp result) (counsel-projectile-find-file)))))
-
 (defun copy-this-file ()
   "Copy this file"
   (interactive)
