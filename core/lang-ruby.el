@@ -25,3 +25,5 @@
                       (format "%s:%s" filename line-number)
                     filename)))
     (format "%s %s %s" command (mapconcat 'identity options " ") filename)))
+
+(setq inf-ruby-console-environment "development")

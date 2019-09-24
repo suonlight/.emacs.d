@@ -109,7 +109,8 @@
 (general-define-key
   :keymaps 'dired-mode-map
   :states '(normal emacs)
-  "\\" #'dired-do-ispell
+  "SPC" nil
+  "\\"  #'dired-do-ispell
   "(" #'dired-hide-details-mode
   ")" #'dired-omit-mode
   "+" #'dired-create-directory
@@ -143,6 +144,7 @@
   "w" #'dired-kill-subdir
   "Y" #'dired-do-relsymlink
   "z" #'diredp-compress-this-file
+  "." #'hydra-dired/body
   "Z" #'dired-do-compress)
 
 (general-define-key

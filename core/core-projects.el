@@ -249,10 +249,6 @@ T - tag prefix
   ("q" nil)
   ("." nil :color blue))
 
-(require 'dired)
-(define-key dired-mode-map "." #'hydra-dired/body)
-(define-key dired-mode-map (kbd "SPC") nil)
-
 (use-package exec-path-from-shell
   :config
   (setq exec-path-from-shell-check-startup-files nil)
