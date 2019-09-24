@@ -232,6 +232,10 @@ Consider reformulating the item to make it easier to remember.\n"
       (setq org-babel-do-load-languages-p t))
     (funcall orig-fun arg info params))
 
+  (defun sl/org-babel-execute-ruby (&optional orig-fun body params)
+    (ansi-color-apply (funcall orig-fun body params)))
+
+  (advice-add 'org-babel-execute:ruby :around 'sl/org-babel-execute-ruby)
   (advice-add 'org-babel-execute-src-block :around 'sl/org-babel-execute-src-block)
 
   (setq org-capture-templates
