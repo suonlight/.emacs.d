@@ -398,11 +398,19 @@
   ",c"       #'multi-libvterm
   ",n"       #'multi-libvterm-next
   ",p"       #'multi-libvterm-prev
+  "s-t"      #'multi-libvterm
   "s-k"      #'multi-libvterm-next
   "s-j"      #'multi-libvterm-prev
   "i"        #'evil-insert-resume
   "o"        #'evil-insert-resume
   "<return>" #'evil-insert-resume)
+
+(general-define-key
+  :keymaps 'vterm-mode-map
+  :states 'insert
+  "s-t"      #'multi-libvterm
+  "s-k"      #'multi-libvterm-next
+  "s-j"      #'multi-libvterm-prev)
 
 (general-define-key
  :states '(normal visual insert emacs motion)
