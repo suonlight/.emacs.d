@@ -47,7 +47,12 @@
   :config (global-evil-matchit-mode))
 
 (use-package evil-goggles
-  :commands (evil-goggles-mode))
+  :config
+  (setq evil-goggles-duration 0.100)
+  (setq evil-goggles-enable-paste nil)
+  (setq evil-goggles-enable-change nil)
+  (setq evil-goggles-enable-commentary nil)
+  (evil-goggles-mode))
 
 (use-package evil-string-inflection :after evil :commands evil-operator-string-inflection)
 
