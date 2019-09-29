@@ -109,7 +109,6 @@
 (general-define-key
   :keymaps 'dired-mode-map
   :states '(normal emacs)
-  "SPC" nil
   "\\"  #'dired-do-ispell
   "(" #'dired-hide-details-mode
   ")" #'dired-omit-mode
@@ -146,6 +145,8 @@
   "z" #'diredp-compress-this-file
   "." #'hydra-dired/body
   "Z" #'dired-do-compress)
+
+(define-key dired-mode-map (kbd "SPC") nil)
 
 (general-define-key
   :keymaps 'ruby-mode-map
