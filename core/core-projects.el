@@ -253,6 +253,8 @@ T - tag prefix
   :config
   (setq exec-path-from-shell-check-startup-files nil)
   (exec-path-from-shell-initialize))
+(require 'dired)
+(define-key dired-mode-map (kbd "SPC") nil)
 
 (use-package prescient)
 (use-package ivy-prescient

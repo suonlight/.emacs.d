@@ -146,8 +146,6 @@
   "." #'hydra-dired/body
   "Z" #'dired-do-compress)
 
-(define-key dired-mode-map (kbd "SPC") nil)
-
 (general-define-key
   :keymaps 'ruby-mode-map
   :states '(normal visual insert emacs)
