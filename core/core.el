@@ -72,7 +72,9 @@
   :hook (after-init . global-flycheck-mode)
   :custom
   (flycheck-highlighting-mode 'symbols)
-  (flycheck-indication-mode nil))
+  (flycheck-indication-mode nil)
+  :config
+  (setq flycheck-check-syntax-automatically '(save)))
 
 (setq-default flycheck-disabled-checkers '(ruby-reek emacs-lisp emacs-lisp-checkdoc javascript-jshint))
 
