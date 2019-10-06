@@ -130,3 +130,4 @@
 (load (concat user-emacs-directory "core/auto-complete"))
 (load (concat user-emacs-directory "core/debugger"))
 (load (concat user-emacs-directory "core/lsp"))
+(load (concat user-emacs-directory "core/tools"))
