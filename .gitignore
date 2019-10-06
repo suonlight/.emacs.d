@@ -20,3 +20,7 @@ persp-confs
 magithub
 
 .extension
+
+.lsp-session-v1
+network-security.data
+var/
