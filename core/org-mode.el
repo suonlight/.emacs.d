@@ -499,3 +499,6 @@ This function is heavily adapted from `org-between-regexps-p'."
   ("S" org-babel-execute-subtree)
   ("t" org-babel-tangle)
   ("q" nil "cancel" :color blue :column nil))
+
+(straight-use-package '(ob-session-async :local-repo "~/.emacs.d/straight/repos/ob-session-async"))
+(require 'ob-session-async-ruby)
