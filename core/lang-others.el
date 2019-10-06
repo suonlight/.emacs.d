@@ -9,3 +9,6 @@
 
 (use-package apib-mode
   :mode ("\\.apib\\'" . apib-mode))
+
+(use-package sqlformat
+  :hook (sql-mode . sqlformat-on-save-mode))
