@@ -665,6 +665,11 @@
  "gh"        #'(:ignore t :which-key "hub")
  "ghr"       #'magithub-issue-refresh
  "ghp"       #'magithub-pull-visit
+ "gr"        #'(:ignore t :which-key "review")
+ "grs"       #'github-review-start
+ "gra"       #'github-review-approve
+ "grr"       #'github-review-reject
+ "grc"       #'github-review-comment
 
  ;; Text
  "x"         #'(:ignore t :which-key "text")
