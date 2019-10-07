@@ -346,8 +346,9 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
 
 (defun evil-multi-libvterm-projectile ()
   (interactive)
-  (multi-libvterm-projectile)
   (if (string= major-mode "vterm-mode")
+    (delete-window)
+    (multi-libvterm-projectile)
     (evil-insert-state))
   (balance-windows-area))
 
