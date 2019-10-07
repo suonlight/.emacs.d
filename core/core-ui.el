@@ -31,7 +31,9 @@
 (use-package all-the-icons-dired
   :defer 2
   :hook (dired-mode . all-the-icons-dired-mode)
-  :after all-the-icons)
+  :after all-the-icons
+  :config
+  (advice-add #'all-the-icons-dired--display :before #'all-the-icons-dired--reset))
 
 (use-package all-the-icons-ivy
   :after (all-the-icons ivy)
