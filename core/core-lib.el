@@ -352,6 +352,12 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
     (evil-insert-state))
   (balance-windows-area))
 
+(defun persp-terminal ()
+  (interactive)
+  (let ((terminal-p (persp-with-name-exists-p "terminal")))
+    (persp-switch "terminal")
+    (unless terminal-p (multi-libvterm))))
+
 (require 'ansi-color)
 (defun display-ansi-colors ()
     (interactive)

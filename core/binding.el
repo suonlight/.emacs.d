@@ -670,6 +670,7 @@
  "ti"        #'indent-guide-global-mode
  "tg"        #'evil-goggles-mode
  "tn"        #'global-display-line-numbers-mode
+ "ta"        #'abbrev-mode
 
  ;; Git
  "g"         #'(:ignore t :which-key "git")

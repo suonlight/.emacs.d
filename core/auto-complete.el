@@ -16,8 +16,6 @@
   ;; (defvar completion-at-point-functions-saved nil)
   :hook (after-init . global-company-mode)
   :config
-  ;; ((company-dabbrev-code company-gtags company-etags company-keywords) company-files company-dabbrev)
-
   ;; (push 'fuzzy completion-styles)
   ;; (setq completion-styles '(fuzzy company-flx-try-completion company-flx-all-completions "An intelligent fuzzy matching completion style."))
 
@@ -48,7 +46,7 @@
   (add-hook 'ruby-mode-hook
     (lambda ()
       (set (make-local-variable 'company-backends)
-        '((company-capf company-dabbrev-code company-files company-etags company-keywords company-yasnippet)
+        '((company-capf company-abbrev company-dabbrev-code company-files company-etags company-keywords company-yasnippet)
 
            ;; (
            ;;  company-dabbrev-code

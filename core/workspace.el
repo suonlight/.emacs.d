@@ -8,10 +8,10 @@
   (defun sl/layout-switch-by-pos (pos)
     "Switch to perspective of position POS."
     (let ((persp-to-switch
-	   (nth pos (persp-names-current-frame-fast-ordered))))
+            (nth pos (persp-names-current-frame-fast-ordered))))
       (setq sl/persp-last-layout (safe-persp-name (get-current-persp)))
       (if persp-to-switch
-	  (persp-switch persp-to-switch))))
+        (persp-switch persp-to-switch))))
 
   (dolist (i (number-sequence 9 0 -1))
     (eval `(defun ,(intern (format "persp-switch-to-%s" i)) nil
