@@ -3,12 +3,12 @@
   :init
   (setq company-minimum-prefix-length 3)
   (setq company-auto-complete nil)
-  (setq company-idle-delay 0.2)
+  (setq company-idle-delay 0)
   (setq company-require-match 'never)
-  (setq company-frontends
-	'(company-pseudo-tooltip-unless-just-one-frontend
-	  company-preview-frontend
-	  company-echo-metadata-frontend))
+  ;; (setq company-frontends
+	;; '(company-pseudo-tooltip-unless-just-one-frontend
+	;;   company-preview-frontend
+	;;   company-echo-metadata-frontend))
   (setq tab-always-indent 'complete)
   ;; Number the candidates (use M-1, M-2 etc to select completions).
   (setq company-show-numbers t)
@@ -24,42 +24,50 @@
   (defun check-expansion ()
     (save-excursion
       (if (looking-at "\\_>") t
-	(backward-char 1)
-	(if (looking-at "\\.") t
-	  (backward-char 1)
-	  (if (looking-at "->") t nil)))))
+        (backward-char 1)
+        (if (looking-at "\\.") t
+          (backward-char 1)
+          (if (looking-at "->") t nil)))))
+
+  (defun do-yas-expand ()
+    (interactive)
+    (let ((yas/fallback-behavior 'return-nil))
+      (yas/expand)))
 
   (defun tab-indent-or-complete ()
     (interactive)
     (if (minibufferp)
-	(minibuffer-complete)
-      (if (or (not yas-minor-mode)
-	      (null (yas-expand)))
-	  (if (check-expansion)
-	      (company-complete-common)
-	    (indent-for-tab-command)))))
+        (minibuffer-complete)
+      (if (or (not yas/minor-mode)
+              (null (do-yas-expand)))
+          (if (check-expansion)
+              (company-complete-common)
+            (indent-for-tab-command)))))
   ;; (global-company-mode 1)
 
   (add-hook 'ruby-mode-hook
-	    (lambda ()
-	      (set (make-local-variable 'company-backends)
-		   '(
-		     company-capf
-		     company-files
-		     company-etags
-		     company-keywords
-		     company-yasnippet
-		     ;; (
-		     ;;  company-dabbrev-code
-		     ;;  )
-		     ;; company-dabbrev
-		     )
-		   )
-	      (company-mode t)
-	      ;; (push 'fuzzy completion-styles)
-	      (setq completion-styles '(partial-completion basic emacs22))
-	      ;; (company-flx-mode +1)
-	      ))
+    (lambda ()
+      (set (make-local-variable 'company-backends)
+        '((company-capf company-dabbrev-code company-files company-etags company-keywords company-yasnippet)
+
+           ;; (
+           ;;  company-dabbrev-code
+           ;;  )
+           ;; company-dabbrev
+           ))
+
+      (company-mode t)
+      ;; (push 'fuzzy completion-styles)
+      ;; (company-flx-mode +1)
+      (setq completion-styles '(partial-completion basic emacs22))
+
+      ;; (defun company-mode/backend-with-yas (backend)
+      ;;   (if (and (listp backend) (member 'company-yasnippet backend))
+      ;;     backend
+      ;;     (append (if (consp backend) backend (list backend))
+      ;;       '(:with company-yasnippet))))
+      ;; (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+      ))
 
   (add-hook 'emacs-lisp-mode-hook
 	    (lambda ()
@@ -68,6 +76,7 @@
   (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
   (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
   (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
+  (define-key company-active-map (kbd "C-<return>") 'do-yas-expand)
   (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
   (define-key company-mode-map [remap indent-for-tab-command] 'tab-indent-or-complete))
 

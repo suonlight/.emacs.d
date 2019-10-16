@@ -2,6 +2,10 @@
 (use-package general)
 
 (general-define-key
+  :keymaps 'company-active-map
+  "C-u" #'company-show-location)
+
+(general-define-key
   :states '(normal)
   :keymaps 'xref--xref-buffer-mode-map
   "q"  #'quit-window
