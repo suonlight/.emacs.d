@@ -40,7 +40,7 @@
   :config
   (all-the-icons-ivy-setup))
 
-(defconst cycle-themes '(misterioso doom-one-light doom-one wombat))
+(defconst cycle-themes '(doom-solarized-light doom-one wombat))
 (defvar current-theme (car cycle-themes))
 
 (defun next-cycle-theme ()
