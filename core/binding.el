@@ -1,6 +1,19 @@
 ;;; -*- lexical-binding: t; -*-
 (use-package general)
 
+;; font sizes
+(global-set-key (kbd "s-=")
+  (lambda ()
+    (interactive)
+    (let ((old-face-attribute (face-attribute 'default :height)))
+      (set-face-attribute 'default nil :height (+ old-face-attribute 10)))))
+
+(global-set-key (kbd "s--")
+  (lambda ()
+    (interactive)
+    (let ((old-face-attribute (face-attribute 'default :height)))
+      (set-face-attribute 'default nil :height (- old-face-attribute 10)))))
+
 (general-define-key
   :keymaps 'company-active-map
   "C-u" #'company-show-location)
@@ -371,6 +384,7 @@
  "<f12>"       #'prodigy-as-default-layout
  "s-<f12>"     #'list-processes-other-window)
 
+; (evil-set-initial-state 'vterm-mode "emacs")
 
 (general-define-key
   :keymaps 'vterm-mode-map
@@ -424,7 +438,7 @@
  "C-TAB"       #'yas-expand
  "s-s"         #'save-buffer
  "s-w"         #'kill-this-buffer
- "s-0"         #'persp-switch-to-0
+ "s-0"         #'persp-terminal
  "s-1"         #'persp-switch-to-1
  "s-2"         #'persp-switch-to-2
  "s-3"         #'persp-switch-to-3
