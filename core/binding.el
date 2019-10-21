@@ -96,7 +96,13 @@
 (general-define-key
  :keymaps 'magit-revision-mode-map
  :states 'normal
- "o"       #'git-link-commit)
+ ;; "o"       #'git-link-commit)
+ "o"       #'forge-browse-topic)
+
+(general-define-key
+ :keymaps 'magit-log-mode-map
+ :states 'normal
+ "o"       #'forge-browse-topic)
 
 (general-define-key
  :keymaps 'racer-help-mode-map
@@ -682,8 +688,8 @@
  "gll"       #'git-link
  "glc"       #'git-link-commit
  "gh"        #'(:ignore t :which-key "hub")
- "ghr"       #'magithub-issue-refresh
- "ghp"       #'magithub-pull-visit
+ "ghr"       #'forge-browse-issues
+ "ghp"       #'forge-browse-pullreq
  "gr"        #'(:ignore t :which-key "review")
  "grs"       #'github-review-start
  "gra"       #'github-review-approve

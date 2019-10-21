@@ -34,12 +34,8 @@
     (git-timemachine)
     (sl/git-timemachine/body)))
 
-(use-package magithub
-  :if (not (featurep 'magithub))
-  :after magit
-  :init (setq magithub-clone-default-directory "~/projects")
-  ;; :config (magithub-feature-autoinject t)
-  )
+(use-package forge
+  :after magit)
 
 (use-package smerge-mode
    :after hydra
