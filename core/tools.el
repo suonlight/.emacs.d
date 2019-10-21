@@ -4,3 +4,8 @@
 
 (use-package github-review
   :straight (github-review :type git :host github :repo "charignon/github-review"))
+
+(use-package devdocs-lookup
+  :straight (devdocs-lookup :type git :host github :repo "skeeto/devdocs-lookup")
+  :config
+  (devdocs-setup))

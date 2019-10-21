@@ -716,6 +716,12 @@
  "xwd"       #'osx-dictionary-search-word-at-point
  "xs"        #'read-aloud-this
 
+  ;; Docs
+ "d"         #'(:ignore t :which-key "docs")
+ "dr"        #'devdocs-lookup-ruby~2.5
+ "dR"        #'devdocs-lookup-rails~5.2
+ "dp"        #'devdocs-lookup-postgresql~9.6
+
  ;; Frame
  "F"         #'(:ignore t :which-key "frame")
  "Fb"        #'switch-to-buffer-other-frame
