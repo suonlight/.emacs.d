@@ -500,5 +500,6 @@ This function is heavily adapted from `org-between-regexps-p'."
   ("t" org-babel-tangle)
   ("q" nil "cancel" :color blue :column nil))
 
-(straight-use-package '(ob-session-async :local-repo "~/.emacs.d/straight/repos/ob-session-async"))
-(require 'ob-session-async-ruby)
+(use-package ob-session-async
+  :straight (ob-session-async :type git :host github :repo "jackkamm/ob-session-async")
+  :config (require 'ob-session-async-ruby))
