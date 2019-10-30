@@ -3,7 +3,7 @@
   :config
   (defun ruby-test-spec-command (filename &optional line-number)
   "Return command to run spec in FILENAME at LINE-NUMBER."
-  (let ((command "bundle exec spring rspec")
+  (let ((command "bundle exec rspec")
         (options ruby-test-rspec-options)
         (filename (if line-number
                       (format "%s:%s" filename line-number)
