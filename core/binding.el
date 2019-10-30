@@ -96,13 +96,14 @@
 (general-define-key
  :keymaps 'magit-revision-mode-map
  :states 'normal
- ;; "o"       #'git-link-commit)
- "o"       #'forge-browse-topic)
+ "o"       #'git-link-commit
+ "`"       #'forge-browse-topic)
 
 (general-define-key
  :keymaps 'magit-log-mode-map
  :states 'normal
- "o"       #'forge-browse-topic)
+ "o"       #'git-link-commit
+ "`"       #'forge-browse-topic)
 
 (general-define-key
  :keymaps 'racer-help-mode-map
