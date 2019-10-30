@@ -12,3 +12,10 @@
 
 (use-package sqlformat
   :hook (sql-mode . sqlformat-on-save-mode))
+
+(use-package terraform-mode)
+
+(use-package company-terraform
+  :after company
+  :straight (emacs-company-terraform :type git :host github :repo "rafalcieslak/emacs-company-terraform")
+  :config (company-terraform-init))
