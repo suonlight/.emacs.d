@@ -19,6 +19,11 @@
   "C-u" #'company-show-location)
 
 (general-define-key
+  :keymaps 'forge-pullreq-list-mode-map
+  :states '(normal)
+  "q"  #'quit-window)
+
+(general-define-key
   :states '(normal)
   :keymaps 'xref--xref-buffer-mode-map
   "q"  #'quit-window
@@ -92,6 +97,12 @@
  "o"       #'osx-dictionary-open-dictionary\.app
  "s"       #'osx-dictionary-search-input
  "q"       #'osx-dictionary-quit)
+
+
+(general-define-key
+ :keymaps 'magit-status-mode-map
+ :states 'normal
+ "`"       #'forge-browse-topic)
 
 (general-define-key
  :keymaps 'magit-revision-mode-map
@@ -321,6 +332,11 @@
   "p"          #'(:ignore t :which-key "presentation")
   "p'"         #'org-tree-slide-mode
   "ps"         #'org-tree-slide-skip-done-toggle
+  "t"          #'(:ignore t :which-key "table")
+  "ti"         #'(:ignore t :which-key "insert")
+  "tic"        #'org-table-insert-column
+  "tir"        #'org-table-insert-row
+  "tih"        #'org-table-insert-hline
   )
 
 (leader-define-key emacs-lisp-mode-map
@@ -714,6 +730,7 @@
  "xfo"       #'copy-as-format-org-mode
  "xfs"       #'copy-as-format-slack
  "xgt"       #'google-translate-at-point
+ "xp"        #'phonetic-translate
  "xwd"       #'osx-dictionary-search-word-at-point
  "xs"        #'read-aloud-this
 
