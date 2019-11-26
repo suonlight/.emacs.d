@@ -1,5 +1,9 @@
 (use-package yaml-mode
-  :mode "\\.ya?ml$")
+  :mode "\\.ya?ml$"
+  :config
+  (yaml-imenu-enable))
+
+(use-package yaml-imenu)
 
 (setq plantuml-jar-path "~/org-modes/plantuml.jar")
 (use-package plantuml-mode
@@ -19,3 +23,5 @@
   :after company
   :straight (emacs-company-terraform :type git :host github :repo "rafalcieslak/emacs-company-terraform")
   :config (company-terraform-init))
+
+(use-package lua-mode)

@@ -67,6 +67,7 @@
      (use-package google-translate
        :commands google-translate-at-point
        :init
+       (setq google-translate-show-phonetic t)
        (setq google-translate-default-source-language "en")
        (setq google-translate-default-target-language "vi"))
 

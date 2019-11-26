@@ -9,3 +9,4 @@
   :straight (devdocs-lookup :type git :host github :repo "skeeto/devdocs-lookup")
   :config
   (devdocs-setup))
+(use-package package-lint)

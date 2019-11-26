@@ -222,6 +222,7 @@ Consider reformulating the item to make it easier to remember.\n"
            (dot . t)
            (sql . t)
            (ruby . t)
+           (lua . t)
            (R . t)
            (org . t)
            (screen . t)

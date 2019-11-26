@@ -4,15 +4,18 @@
   :defer 1
   :config (load-theme 'doom-one t))
 
+(use-package kaolin-themes
+  :defer 1)
+
 (use-package doom-modeline
   :after doom-themes
   :init
-  (setq doom-modeline-height 30
-	doom-modeline-bar-width 3
-	doom-modeline-buffer-file-name-style 'relative-to-project
-	doom-modeline-minor-modes nil
-	doom-modeline-major-mode-color-icon t
-	doom-modeline-icon t)
+  (setq doom-modeline-height 20
+    doom-modeline-bar-width 3
+    doom-modeline-buffer-file-name-style 'relative-to-project
+    doom-modeline-minor-modes nil
+    doom-modeline-major-mode-color-icon t
+    doom-modeline-icon t)
   :config
   (doom-modeline-mode))
 
