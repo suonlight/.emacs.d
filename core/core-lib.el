@@ -362,3 +362,10 @@ KEYS is a string associated with a template (will be passed to `org-capture')"
 (defun display-ansi-colors ()
     (interactive)
     (ansi-color-apply-on-region (point-min) (point-max)))
+
+(defun org-agenda-only-window ()
+  (interactive)
+  (let ((org-agenda-window-setup 'only-window))
+    (sl/layout-switch-by-pos 0)
+    (org-agenda nil "a")
+    (call-interactively 'org-agenda-day-view)))
