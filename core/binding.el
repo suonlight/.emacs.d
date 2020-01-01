@@ -179,6 +179,8 @@
   "Y" #'dired-do-relsymlink
   "z" #'diredp-compress-this-file
   "." #'hydra-dired/body
+  "n" #'evil-next-match
+  "N" #'evil-previous-match
   "Z" #'dired-do-compress)
 
 (general-define-key
@@ -402,6 +404,7 @@
  "s-b"         #'counsel-projectile-switch-to-buffer
  "s-`"         #'evil-multi-libvterm-projectile
  "s-<S-w>"     #'evil-window-delete
+  "<f9>"       #'toggle-tmux
  "<f10>"       #'toggle-maximize-buffer
  "<f11>"       #'(sl/persp-hydra/body :which-key "layouts")
  "<f12>"       #'prodigy-as-default-layout

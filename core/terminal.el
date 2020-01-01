@@ -10,12 +10,13 @@
   :config
   (defun toggle-tmux ()
     (interactive)
+    (sl/layout-switch-by-pos 0)
     (let ((tmux-buffer-name "*tmux*"))
       (if-let ((tmux-buffer (get-buffer tmux-buffer-name)))
-	  (switch-to-buffer tmux-buffer)
-	(with-current-buffer (multi-libvterm)
-	  (rename-buffer tmux-buffer-name)
-	  (vterm-send-string "tmux a -d\n")))))
+        (switch-to-buffer tmux-buffer)
+        (with-current-buffer (multi-libvterm)
+          (rename-buffer tmux-buffer-name)
+          (vterm-send-string "tmux a -d\n")))))
 
   (defun vterm-send-return ()
     "Sends C-m to the libvterm."
@@ -24,9 +25,10 @@
   (define-key vterm-mode-map [return]                      #'vterm-send-return)
 
   (add-hook 'vterm-mode-hook
-	    (lambda ()
-	      (setq-local evil-insert-state-cursor 'box)
-	      (evil-insert-state)))
+    (lambda ()
+      ;; (compilation-shell-minor-mode)
+      (setq-local evil-insert-state-cursor 'box)
+      (evil-insert-state)))
 
   (setq vterm-keymap-exceptions nil))
   ;; (evil-define-key 'insert vterm-mode-map (kbd "C-e")      #'vterm--self-insert)

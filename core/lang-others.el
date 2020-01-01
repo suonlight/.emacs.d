@@ -19,6 +19,8 @@
 
 (use-package terraform-mode)
 
+(use-package protobuf-mode)
+
 (use-package company-terraform
   :after company
   :straight (emacs-company-terraform :type git :host github :repo "rafalcieslak/emacs-company-terraform")
