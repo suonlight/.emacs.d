@@ -30,7 +30,12 @@
       (setq-local evil-insert-state-cursor 'box)
       (evil-insert-state)))
 
-  (setq vterm-keymap-exceptions nil))
+  (setq vterm-keymap-exceptions nil)
+
+  (evil-define-key 'insert vterm-mode-map (kbd "C-l")      #'vterm--self-insert)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-h")      #'vterm--self-insert)
+
+  )
   ;; (evil-define-key 'insert vterm-mode-map (kbd "C-e")      #'vterm--self-insert)
   ;; (evil-define-key 'insert vterm-mode-map (kbd "C-f")      #'vterm--self-insert)
   ;; (evil-define-key 'insert vterm-mode-map (kbd "C-a")      #'vterm--self-insert)

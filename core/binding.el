@@ -482,7 +482,7 @@
  "?"   #'counsel-descbinds
  "/"   #'counsel-rg
  "*"   #'counsel-rg-thing-at-point
- "TAB" #'evil-switch-to-windows-last-buffer
+ "`" #'evil-switch-to-windows-last-buffer
  "SPC" #'counsel-M-x
  "1"   #'winum-select-window-1
  "2"   #'winum-select-window-2
@@ -575,7 +575,7 @@
  "bp"         #'previous-buffer
  "bw"         #'read-only-mode
  "bd"         #'kill-this-buffer
- "bs"         #'open-scratch-buffer
+ "bx"         #'open-scratch-buffer
 
  ;; Window
  "w"          #'(:ignore t :which-key "windows")
@@ -632,16 +632,16 @@
  "jb"         #'avy-pop-mark
  "jd"         #'dired-jump
  "jf"         #'find-function
- "jj"         #'evil-avy-goto-char-timer
  "jr"         #'avy-resume
  "ji"         #'counsel-imenu
+ "jj"         #'evil-avy-goto-char-timer
  "jl"         #'evil-avy-goto-line
+ "jw"         #'evil-avy-goto-word-or-subword-1
  "jn"         #'sp-newline
  "jo"         #'open-line
  "jq"         #'dumb-jump-quick-look
  "js"         #'sp-split-sexp
  "jv"         #'find-variable
- "jw"         #'evil-avy-goto-word-or-subword-1
 
  ;; registers
  "r"          #'(:ignore t :which-key "registers")

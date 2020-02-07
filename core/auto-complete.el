@@ -43,29 +43,17 @@
             (indent-for-tab-command)))))
   ;; (global-company-mode 1)
 
+  ;; (push 'fuzzy completion-styles)
+  ;; (company-flx-mode +1)
+  (setq completion-styles '(partial-completion basic emacs22))
+  (company-mode t)
+  (setq company-backends '((company-capf company-abbrev company-dabbrev-code company-files company-etags company-keywords company-yasnippet)
+                            company-dabbrev))
+
   (add-hook 'ruby-mode-hook
     (lambda ()
       (set (make-local-variable 'company-backends)
-        '((company-capf company-abbrev company-dabbrev-code company-files company-etags company-keywords company-yasnippet)
-
-           ;; (
-           ;;  company-dabbrev-code
-           ;;  )
-           ;; company-dabbrev
-           ))
-
-      (company-mode t)
-      ;; (push 'fuzzy completion-styles)
-      ;; (company-flx-mode +1)
-      (setq completion-styles '(partial-completion basic emacs22))
-
-      ;; (defun company-mode/backend-with-yas (backend)
-      ;;   (if (and (listp backend) (member 'company-yasnippet backend))
-      ;;     backend
-      ;;     (append (if (consp backend) backend (list backend))
-      ;;       '(:with company-yasnippet))))
-      ;; (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
-      ))
+        '((company-capf company-abbrev company-dabbrev-code company-files company-etags company-keywords company-yasnippet)))))
 
   (add-hook 'emacs-lisp-mode-hook
 	    (lambda ()

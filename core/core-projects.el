@@ -3,6 +3,10 @@
 (use-package projectile
   :commands (projectile-mode projectile-project-p projectile-project-root sl/persp-hydra/body)
   :custom
+  ;; (counsel-etags-ctags-options-file "~/.etags")
+  ;; (tags-file-name "ETAGS")
+  ;; (counsel-etags-tags-file-name "ETAGS")
+  ;; (projectile-tags-file-name "ETAGS")
   (projectile-require-project-root nil))
 
 (use-package ivy
@@ -249,12 +253,13 @@ T - tag prefix
   ("q" nil)
   ("." nil :color blue))
 
-(use-package exec-path-from-shell
-  :config
-  (setq exec-path-from-shell-check-startup-files nil)
-  (exec-path-from-shell-initialize))
 (require 'dired)
 (define-key dired-mode-map (kbd "SPC") nil)
+
+;; (use-package exec-path-from-shell
+;;   :config
+;;   (setq exec-path-from-shell-check-startup-files nil)
+;;   (exec-path-from-shell-initialize))
 
 (use-package prescient)
 (use-package ivy-prescient
@@ -271,6 +276,27 @@ T - tag prefix
   :config
   (setq tags-revert-without-query 1)
   (setq counsel-etags-update-interval 600)
+  ;; (setq counsel-etags-find-program "/usr/local/bin/fd")
   (setq counsel-etags-tags-program "/usr/local/bin/ctags")
-  (add-to-list 'counsel-etags-ignore-directories "build"))
+  (add-to-list 'counsel-etags-ignore-directories "build")
+  (add-to-list 'counsel-etags-ignore-directories "org-modes"))
 
+;; (use-package snails
+;;   :straight (snails :type git :host github :repo "manateelazycat/snails")
+;;   :config
+;;   (setq snails-default-backends '(snails-backend-fd snails-backend-projectile snails-backend-buffer)))
+;; (if (featurep 'cocoa)
+;;     (progn
+;;       (setq ns-use-native-fullscreen nil)
+;;       (setq ns-use-fullscreen-animation nil)
+;;       (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
+;;       (run-at-time "2sec" nil
+;;                    (lambda ()
+;;                      (toggle-frame-fullscreen)
+;;                      )))
+;;   (require 'fullscreen)
+;;   (fullscreen))
+
+;; (use-package fzf :load-path "~/projects/fzf.el")
+;; (use-package flx)
+;; (use-package fuz :straight (fuz.el :type git :host github :repo "cireu/fuz.el"))
